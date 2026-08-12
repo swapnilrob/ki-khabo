@@ -5,7 +5,7 @@ import cors from "cors";
 import connectDB from "./config/db.js";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 
-// import authRoutes from "./routes/authRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
 // import adminRoutes from "./routes/adminRoutes.js";
 // import restaurantRoutes from "./routes/restaurantRoutes.js";
 
@@ -24,7 +24,7 @@ app.get("/api/health", (req, res) =>
 
 // ─── ROUTE REGISTRY ────────────────────────────────────────────────
 // Each member adds exactly ONE line here for their own route file.
-// app.use("/api/auth", authRoutes);
+app.use("/api/auth", authRoutes);
 // app.use("/api/admin", adminRoutes);
 // app.use("/api/restaurants", restaurantRoutes);
 // app.use("/api/nutrition", nutritionRoutes);      // Mostahid
