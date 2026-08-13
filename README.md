@@ -15,4 +15,4 @@ CSE471 System Analysis and Design · Group 11 · Section 02 · Summer 2026
 cd server && npm install && npm run dev     # http://localhost:5000
 cd client && npm install && npm run dev     # http://localhost:5173
 ```
-Copy `server/.env.example` to `server/.env` and fill in the values (ask the group chat).
+Copy `server/.env.example` to `server/.env` and fill in the values.
