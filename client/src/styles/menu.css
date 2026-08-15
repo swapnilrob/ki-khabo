@@ -1,0 +1,126 @@
+.profile-wrap {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.profile-header {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  margin-bottom: 24px;
+}
+.profile-header h1 {
+  margin-bottom: 6px;
+  font-size: 26px;
+}
+.profile-meta {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+.cuisine-chip {
+  display: inline-block;
+  background: #f0efe9;
+  color: #4a4a4a;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  margin: 4px 6px 0 0;
+}
+
+.menu-section-title {
+  margin: 24px 0 10px;
+  font-size: 18px;
+  text-transform: capitalize;
+  border-bottom: 2px solid #d64545;
+  display: inline-block;
+  padding-bottom: 2px;
+}
+
+.dish-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+}
+.dish-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+.dish-name {
+  font-weight: 700;
+  font-size: 16px;
+}
+.dish-price {
+  font-weight: 700;
+  color: #d64545;
+  white-space: nowrap;
+}
+.dish-desc {
+  color: #666;
+  font-size: 14px;
+  margin: 6px 0;
+}
+
+.tag {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  margin: 4px 5px 0 0;
+  font-weight: 600;
+}
+.tag-diet {
+  background: #e6f4ea;
+  color: #1e7d34;
+}
+.tag-allergen {
+  background: #fdecea;
+  color: #c0392b;
+}
+.tag-verified {
+  background: #e8f0fe;
+  color: #1a56db;
+}
+
+.nutrition-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(78px, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed #e3e3e3;
+}
+.nutrition-cell {
+  text-align: center;
+  background: #fafafa;
+  border-radius: 6px;
+  padding: 7px 4px;
+}
+.nutrition-val {
+  font-weight: 700;
+  font-size: 14px;
+  display: block;
+}
+.nutrition-lbl {
+  font-size: 10px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.restaurant-list-item {
+  background: #fff;
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

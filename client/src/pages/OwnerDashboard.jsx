@@ -1,4 +1,5 @@
 import { useAuth } from "../context/AuthContext";
+import { Link } from "react-router-dom";
 
 export default function OwnerDashboard() {
   const { user, restaurant, logout } = useAuth();
@@ -26,7 +27,9 @@ export default function OwnerDashboard() {
         </p>
       )}
 
-      <p style={{ marginTop: 16 }}>Menu &amp; analytics modules will load here.</p>
+      <div style={{ marginTop: 16 }}>
+        <Link to="/owner/menu"><button>Manage menu</button></Link>
+      </div>
     </div>
   );
 }

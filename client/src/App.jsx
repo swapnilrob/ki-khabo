@@ -11,6 +11,10 @@ import OwnerDashboard from "./pages/OwnerDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import ReviewDemo from "./pages/ReviewDemo"; 
 
+import RestaurantList from "./pages/RestaurantList";
+import RestaurantProfile from "./pages/RestaurantProfile";
+import OwnerMenu from "./pages/OwnerMenu";
+
 // Sends each role to the right dashboard after login
 function DashboardRedirect() {
   const { user, loading } = useAuth();
@@ -55,6 +59,18 @@ export default function App() {
       />
 
       <Route path="/reviews-demo" element={<ReviewDemo />} />
+
+      {/* M1-2 — Swapnil */}
+      <Route path="/restaurants" element={<RestaurantList />} />
+      <Route path="/restaurant/:id" element={<RestaurantProfile />} />
+      <Route
+        path="/owner/menu"
+        element={
+          <ProtectedRoute allow={["owner"]}>
+            <OwnerMenu />
+          </ProtectedRoute>
+        }
+      />
 
       <Route path="*" element={<h2 style={{ padding: 24 }}>404 — Page not found</h2>} />
     </Routes>
