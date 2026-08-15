@@ -9,6 +9,7 @@ import RegisterOwner from "./pages/RegisterOwner";
 import UserDashboard from "./pages/UserDashboard";
 import OwnerDashboard from "./pages/OwnerDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+import ReviewDemo from "./pages/ReviewDemo"; 
 
 // Sends each role to the right dashboard after login
 function DashboardRedirect() {
@@ -53,9 +54,9 @@ export default function App() {
         }
       />
 
-      {/* Members add their own nested routes here later */}
+      <Route path="/reviews-demo" element={<ReviewDemo />} />
 
       <Route path="*" element={<h2 style={{ padding: 24 }}>404 — Page not found</h2>} />
     </Routes>
   );
-}
+} 

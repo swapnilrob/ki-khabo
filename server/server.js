@@ -30,7 +30,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/restaurants", restaurantRoutes);
 // app.use("/api/nutrition", nutritionRoutes);      // Mostahid
-app.use("/api/reviews", reviewRoutes);           // Shakib
+app.use("/api/reviews", reviewRoutes);           // Shakib (M1-4)
 app.use("/api/dishes", dishRoutes);              // Swapnil (M1-2)
 // app.use("/api/orders", orderRoutes);             // Noman
 // app.use("/api/meal-planner", mealPlannerRoutes); // Swapnil
