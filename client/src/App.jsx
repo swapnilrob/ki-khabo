@@ -15,6 +15,8 @@ import RestaurantList from "./pages/RestaurantList";
 import RestaurantProfile from "./pages/RestaurantProfile";
 import OwnerMenu from "./pages/OwnerMenu";
 
+import Discover from "./pages/Discover";
+
 // Sends each role to the right dashboard after login
 function DashboardRedirect() {
   const { user, loading } = useAuth();
@@ -59,6 +61,8 @@ export default function App() {
       />
 
       <Route path="/reviews-demo" element={<ReviewDemo />} />
+      {/* M1-1 — Noman */}
+      <Route path="/discover" element={<Discover />} />
 
       {/* M1-2 — Swapnil */}
       <Route path="/restaurants" element={<RestaurantList />} />
