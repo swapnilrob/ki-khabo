@@ -39,7 +39,7 @@ export default function RestaurantProfile() {
       </div>
     );
 
-  const { restaurant, menuByCategory, menuCount } = data;
+  const { restaurant, menuByCategory, menuCount, filtered, hiddenCount } = data;
   const categories = Object.keys(menuByCategory);
 
   return (
@@ -68,6 +68,14 @@ export default function RestaurantProfile() {
           ))}
         </div>
       </div>
+
+      {/* M1-3 — dietary filter notice */}
+      {filtered && (
+        <p style={{ color: "#666", fontSize: 13, margin: "12px 0" }}>
+          {hiddenCount} item{hiddenCount > 1 ? "s" : ""} hidden based on your
+          dietary preferences and allergies. <Link to="/app/preferences">Edit preferences</Link>
+        </p>
+      )}
 
       <h2 style={{ fontSize: 20 }}>Menu ({menuCount})</h2>
 

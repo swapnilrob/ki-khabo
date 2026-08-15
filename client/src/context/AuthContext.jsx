@@ -53,9 +53,22 @@ export const AuthProvider = ({ children }) => {
     setRestaurant(null);
   };
 
+  // M1-3 — called after PUT /auth/me so the cached user reflects new
+  // dietary preferences/allergies without a full page refresh.
+  const updateUser = (updatedUser) => setUser(updatedUser);
+
   return (
     <AuthContext.Provider
-      value={{ user, restaurant, loading, login, registerUser, registerOwner, logout }}
+      value={{
+        user,
+        restaurant,
+        loading,
+        login,
+        registerUser,
+        registerOwner,
+        logout,
+        updateUser,
+      }}
     >
       {children}
     </AuthContext.Provider>

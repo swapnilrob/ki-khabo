@@ -33,6 +33,20 @@ export const protect = asyncHandler(async (req, res, next) => {
   req.user = user;
   next();
 });
+export const optionalAuth = asyncHandler(async (req, res, next) => {
+  const header = req.headers.authorization;
+  if (!header || !header.startsWith("Bearer ")) return next();
+
+  const token = header.split(" ")[1];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id);
+    if (user && user.isActive) req.user = user;
+  } catch {
+    // invalid/expired token on a public route — fall through as a guest
+  }
+  next();
+});
 
 export const authorize =
   (...roles) =>
