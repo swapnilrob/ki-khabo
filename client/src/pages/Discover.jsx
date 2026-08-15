@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { fetchDiscoverFilters, searchRestaurants } from "../api/discover";
 import StarRating from "../components/StarRating";
+import RestaurantMap from "../components/RestaurantMap";
 import "../styles/menu.css";
 import "../styles/discover.css";
 
@@ -10,6 +11,7 @@ const PRICES = ["$", "$$", "$$$"];
 export default function Discover() {
   // ── Filter controls (what the user picks) ───────────────────────
   const [q, setQ] = useState("");
+  const [view, setView] = useState("list");       // "list" | "map"
   const [cuisine, setCuisine] = useState("");
   const [price, setPrice] = useState("");        // "" = any
   const [minRating, setMinRating] = useState(""); // "" = any
@@ -137,9 +139,26 @@ export default function Discover() {
         </div>
       </div>
 
+      {/* ── List / Map toggle ── */}
+      <div className="view-toggle">
+        <button className={view === "list" ? "active" : ""} onClick={() => setView("list")}>
+          ☰ List
+        </button>
+        <button className={view === "map" ? "active" : ""} onClick={() => setView("map")}>
+          🗺️ Map
+        </button>
+      </div>
+
       {/* ── Results ── */}
       {loading ? (
         <p style={{ color: "#666" }}>Loading…</p>
+      ) : view === "map" ? (
+        <>
+          <p style={{ color: "#666", margin: "4px 0 12px" }}>
+            {meta.total} restaurant{meta.total === 1 ? "" : "s"} found
+          </p>
+          <RestaurantMap restaurants={results} userCoords={coords} />
+        </>
       ) : (
         <>
           <p style={{ color: "#666", margin: "4px 0 12px" }}>
