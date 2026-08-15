@@ -7,13 +7,15 @@ import {
   updateDish,
   deleteDish,
 } from "../controllers/dishController.js";
-import { protect, authorize } from "../middleware/authMiddleware.js";
+import { protect, authorize, optionalAuth } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
 // ── Public reads ──
 // Specific paths first, then the /:id wildcard last.
-router.get("/restaurant/:restaurantId", getRestaurantProfile);
+// optionalAuth (M1-3): identifies a logged-in user, if any, so the dietary
+// filter can personalize the menu — guests still get the full list.
+router.get("/restaurant/:restaurantId", optionalAuth, getRestaurantProfile);
 
 // ── Owner menu management ──
 router.get("/my/menu", protect, authorize("owner"), getMyMenu);

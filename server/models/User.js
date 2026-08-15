@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
-
+import { DIETARY_PREFERENCES, ALLERGENS } from "../constants/dietaryOptions.js";
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -34,9 +34,9 @@ const userSchema = new mongoose.Schema(
     },
     location: { type: String, default: "" },
 
-    // Mostahid (M1-3) fills these later
-    dietaryPreferences: [{ type: String }],
-    allergies: [{ type: String }],
+    // M1-3 (Mostahid) — dietary preference + allergy profile
+    dietaryPreferences: [{ type: String, enum: DIETARY_PREFERENCES }],
+    allergies: [{ type: String, enum: ALLERGENS }],
 
     // Shakib (M3-6, M3-7) fills these later
     isPremium: { type: Boolean, default: false },
