@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import RegisterUser from "./pages/RegisterUser";
 import RegisterOwner from "./pages/RegisterOwner";
 import UserDashboard from "./pages/UserDashboard";
+import ProfilePreferences from "./pages/ProfilePreferences";
 import OwnerDashboard from "./pages/OwnerDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import ReviewDemo from "./pages/ReviewDemo"; 
@@ -56,6 +57,16 @@ export default function App() {
         element={
           <ProtectedRoute allow={["admin"]}>
             <AdminDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* M1-3 — Mostahid */}
+      <Route
+        path="/app/preferences"
+        element={
+          <ProtectedRoute allow={["user"]}>
+            <ProfilePreferences />
           </ProtectedRoute>
         }
       />

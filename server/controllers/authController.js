@@ -2,6 +2,7 @@ import asyncHandler from "express-async-handler";
 import User from "../models/User.js";
 import Restaurant from "../models/Restaurant.js";
 import { generateToken } from "../utils/generateToken.js";
+import { DIETARY_PREFERENCES, ALLERGENS } from "../constants/dietaryOptions.js";
 
 const publicUser = (user) => ({
   id: user._id,
@@ -171,13 +172,32 @@ export const getMe = asyncHandler(async (req, res) => {
 // @route  PUT /api/auth/me
 // @access Private
 export const updateMe = asyncHandler(async (req, res) => {
-  const { name, phone, location, password } = req.body;
+  const { name, phone, location, password, dietaryPreferences, allergies } = req.body;
   const user = await User.findById(req.user._id);
 
   if (name) user.name = name;
   if (phone) user.phone = phone;
   if (location !== undefined) user.location = location;
   if (password) user.password = password;
+
+  // M1-3 — dietary preferences & allergies
+  if (dietaryPreferences !== undefined) {
+    const invalid = dietaryPreferences.filter((p) => !DIETARY_PREFERENCES.includes(p));
+    if (invalid.length) {
+      res.status(400);
+      throw new Error(`Unknown dietary preference(s): ${invalid.join(", ")}`);
+    }
+    user.dietaryPreferences = dietaryPreferences;
+  }
+
+  if (allergies !== undefined) {
+    const invalid = allergies.filter((a) => !ALLERGENS.includes(a));
+    if (invalid.length) {
+      res.status(400);
+      throw new Error(`Unknown allergy tag(s): ${invalid.join(", ")}`);
+    }
+    user.allergies = allergies;
+  }
 
   await user.save();
   res.json({ success: true, user: publicUser(user) });
