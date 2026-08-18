@@ -31,6 +31,21 @@ export default function Discover() {
       .then((res) => setCuisineOptions(res.cuisines || []))
       .catch(() => setCuisineOptions([]));
   }, []);
+    // Auto-detect user location on first load and sort by distance
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+          setSort("distance");
+        }, 
+        () => {
+          // Permission denied or error — just continue without location
+          console.log("Location not available, showing default results");
+        }
+      );
+    }
+  }, []);
 
   // Re-run the search whenever a filter changes. The 350ms timer is a
   // "debounce" — it waits until you stop typing before calling the API,
@@ -46,7 +61,7 @@ export default function Discover() {
       if (coords) {
         params.lat = coords.lat;
         params.lng = coords.lng;
-        params.radius = 5000; // 5 km
+        params.radius = 50000; // 5 km
       }
 
       searchRestaurants(params)
@@ -130,7 +145,8 @@ export default function Discover() {
           <select value={sort} onChange={(e) => onFilterChange(setSort)(e.target.value)}>
             <option value="rating">Top rated</option>
             <option value="name">Name (A–Z)</option>
-          </select>
+            <option value="distance">Nearest first</option>
+          </select> 
 
           <button className="ghost-btn" onClick={useMyLocation}>
             {coords ? "📍 Near me (on)" : "📍 Near me"}
