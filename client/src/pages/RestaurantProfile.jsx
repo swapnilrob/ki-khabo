@@ -3,6 +3,10 @@ import { useParams, Link } from "react-router-dom";
 import { fetchRestaurantProfile } from "../api/dishes";
 import StarRating from "../components/StarRating";
 import DishCard from "../components/DishCard";
+import ReviewList from "../components/ReviewList";
+import ReviewForm from "../components/ReviewForm";
+import { fetchRestaurantReviews } from "../api/reviews";
+import { useAuth } from "../context/AuthContext";
 import "../styles/menu.css";
 
 export default function RestaurantProfile() {
@@ -10,6 +14,9 @@ export default function RestaurantProfile() {
   const [data, setData] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [reviews, setReviews] = useState([]);
+  const [reviewMeta, setReviewMeta] = useState({ average: 0, count: 0 });
+  const { user } = useAuth();
 
   useEffect(() => {
     let cancelled = false;
@@ -29,6 +36,32 @@ export default function RestaurantProfile() {
       cancelled = true;
     };
   }, [id]);
+    // Fetch restaurant reviews
+  useEffect(() => {
+    if (!id) return;
+    fetchRestaurantReviews(id)
+      .then((res) => {
+        setReviews(res.reviews || []);
+        setReviewMeta({
+          average: res.averageRating || 0,
+          count: res.totalReviews || res.reviews?.length || 0,
+        });
+      })
+      .catch(() => setReviews([]));
+  }, [id]);
+
+  const handleNewReview = (newReview) => {
+    const enriched = {
+      ...newReview,
+      user: { name: user.name },
+    };
+    setReviews((prev) => [enriched, ...prev]);
+    setReviewMeta((prev) => ({
+      count: prev.count + 1,
+      average:
+        (prev.average * prev.count + newReview.rating) / (prev.count + 1),
+    }));
+  }; 
 
   if (loading) return <p style={{ padding: 24 }}>Loading…</p>;
   if (error)
@@ -89,10 +122,34 @@ export default function RestaurantProfile() {
         <section key={cat}>
           <h3 className="menu-section-title">{cat}</h3>
           {menuByCategory[cat].map((dish) => (
-            <DishCard key={dish.id} dish={dish} />
+            <DishCard key={dish.id} dish={dish} restaurantId={id} />
           ))}
         </section>
       ))}
+
+      {/* ── Restaurant Reviews ── */}
+      <hr style={{ margin: "32px 0 24px", border: "none", borderTop: "1px solid #eee" }} />
+
+      <ReviewList
+        reviews={reviews}
+        average={reviewMeta.average}
+        count={reviewMeta.count}
+        title="Restaurant Reviews"
+      />
+
+      {user ? (
+        <div style={{ marginTop: 20 }}>
+          <ReviewForm
+            restaurantId={id}
+            targetType="restaurant"
+            onSubmitted={handleNewReview}
+          />
+        </div>
+      ) : (
+        <p style={{ color: "#666", marginTop: 16 }}>
+          <Link to="/login">Log in</Link> to leave a review.
+        </p>
+      )}
     </div>
   );
-}
+} 

@@ -66,14 +66,8 @@ const reviewSchema = new mongoose.Schema(
 // ── Guard against duplicate reviews ────────────────────────────────
 // One dish review per user per dish, and one ambience review per user
 // per restaurant. Partial indexes keep the two rules independent.
-reviewSchema.index(
-  { user: 1, dish: 1 },
-  { unique: true, partialFilterExpression: { targetType: "dish" } }
-);
-reviewSchema.index(
-  { user: 1, restaurant: 1 },
-  { unique: true, partialFilterExpression: { targetType: "restaurant" } }
-);
+reviewSchema.index({ user: 1, dish: 1 });
+reviewSchema.index({ user: 1, restaurant: 1 });
 
 // ── Aggregation helpers (this is the "aggregate average rating" requirement) ──
 
