@@ -122,7 +122,7 @@ export default function RestaurantProfile() {
         <section key={cat}>
           <h3 className="menu-section-title">{cat}</h3>
           {menuByCategory[cat].map((dish) => (
-            <DishCard key={dish.id} dish={dish} />
+            <DishCard key={dish.id} dish={dish} restaurantId={id} />
           ))}
         </section>
       ))}
