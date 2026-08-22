@@ -12,6 +12,9 @@ import HealthDashboard from "./pages/HealthDashboard";
 import OwnerDashboard from "./pages/OwnerDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import ReviewDemo from "./pages/ReviewDemo"; 
+import Feed from "./pages/Feed";
+import SavedDishes from "./pages/SavedDishes";
+import FoodLists from "./pages/FoodLists"; 
 
 import RestaurantList from "./pages/RestaurantList";
 import RestaurantProfile from "./pages/RestaurantProfile";
@@ -83,6 +86,9 @@ export default function App() {
       />
 
       <Route path="/reviews-demo" element={<ReviewDemo />} />
+      <Route path="/feed" element={<ProtectedRoute allow={["user"]}><Feed /></ProtectedRoute>} />
+      <Route path="/saved-dishes" element={<ProtectedRoute allow={["user"]}><SavedDishes /></ProtectedRoute>} />
+      <Route path="/food-lists" element={<FoodLists />} /> 
       {/* M1-1 — Noman */}
       <Route path="/discover" element={<Discover />} />
 
