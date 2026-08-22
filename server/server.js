@@ -11,6 +11,7 @@ import restaurantRoutes from "./routes/restaurantRoutes.js";
 import reviewRoutes from "./routes/reviewRoutes.js";
 import dishRoutes from "./routes/dishRoutes.js";
 import discoverRoutes from "./routes/discoverRoutes.js";
+import nutritionRoutes from "./routes/nutritionRoutes.js";
 
 dotenv.config();
 connectDB();
@@ -30,7 +31,7 @@ app.get("/api/health", (req, res) =>
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/restaurants", restaurantRoutes);
-// app.use("/api/nutrition", nutritionRoutes);      // Mostahid
+app.use("/api/nutrition", nutritionRoutes);      // Mostahid (M2-1)
 app.use("/api/reviews", reviewRoutes);           // Shakib (M1-4)
 app.use("/api/dishes", dishRoutes);              // Swapnil (M1-2)
 app.use("/api/discover", discoverRoutes);        // Noman (M1-1)

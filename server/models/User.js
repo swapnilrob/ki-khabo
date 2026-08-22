@@ -38,6 +38,9 @@ const userSchema = new mongoose.Schema(
     dietaryPreferences: [{ type: String, enum: DIETARY_PREFERENCES }],
     allergies: [{ type: String, enum: ALLERGENS }],
 
+    // M2-1 (Mostahid) — user-defined daily calorie target for the Health Dashboard
+    dailyCalorieGoal: { type: Number, default: 2000, min: 800, max: 8000 },
+
     // Shakib (M3-6, M3-7) fills these later
     isPremium: { type: Boolean, default: false },
     rewardPoints: { type: Number, default: 0 },

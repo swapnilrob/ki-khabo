@@ -8,6 +8,7 @@ import RegisterUser from "./pages/RegisterUser";
 import RegisterOwner from "./pages/RegisterOwner";
 import UserDashboard from "./pages/UserDashboard";
 import ProfilePreferences from "./pages/ProfilePreferences";
+import HealthDashboard from "./pages/HealthDashboard";
 import OwnerDashboard from "./pages/OwnerDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import ReviewDemo from "./pages/ReviewDemo"; 
@@ -67,6 +68,16 @@ export default function App() {
         element={
           <ProtectedRoute allow={["user"]}>
             <ProfilePreferences />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* M2-1 — Mostahid */}
+      <Route
+        path="/app/health"
+        element={
+          <ProtectedRoute allow={["user"]}>
+            <HealthDashboard />
           </ProtectedRoute>
         }
       />
