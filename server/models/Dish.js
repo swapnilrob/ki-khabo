@@ -98,4 +98,4 @@ dishSchema.index({ restaurant: 1, name: 1 }, { unique: true });
 
 // IMPORTANT: registered as "Dish" — Shakib's Review model uses ref: "Dish".
 // Renaming this breaks his populate("dish").
-export default mongoose.model("Dish", dishSchema);
+export default mongoose.model("Dish", dishSchema); 

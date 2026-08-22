@@ -243,4 +243,4 @@ export const deleteDish = asyncHandler(async (req, res) => {
 
   await dish.deleteOne();
   res.json({ success: true, message: "Dish removed", id });
-});
+}); 

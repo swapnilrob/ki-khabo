@@ -26,4 +26,4 @@ router.delete("/:id", protect, authorize("owner"), deleteDish);
 // ── Public single dish (LAST — /:id would otherwise swallow the paths above) ──
 router.get("/:id", getDishById);
 
-export default router;
+export default router; 
