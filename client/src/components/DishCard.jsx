@@ -3,8 +3,10 @@ import StarRating from "./StarRating";
 import ReviewList from "./ReviewList";
 import ReviewForm from "./ReviewForm";
 import { fetchDishReviews } from "../api/reviews";
+import { logMeal } from "../api/nutrition";
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
+import "../styles/nutrition.css";
 
 const NUTRIENTS = [
   ["calories", "kcal"],
@@ -22,6 +24,11 @@ export default function DishCard({ dish, restaurantId }) {
   const [reviews, setReviews] = useState([]);
   const [reviewMeta, setReviewMeta] = useState({ average: 0, count: 0 });
   const [loaded, setLoaded] = useState(false);
+
+  // M2-1 — log this dish as a meal
+  const [servings, setServings] = useState(1);
+  const [logging, setLogging] = useState(false);
+  const [logged, setLogged] = useState(false);
 
   const n = dish.nutrition || {};
 
@@ -53,6 +60,19 @@ export default function DishCard({ dish, restaurantId }) {
       average:
         (prev.average * prev.count + newReview.rating) / (prev.count + 1),
     }));
+  };
+
+  const handleLogMeal = async () => {
+    setLogging(true);
+    setLogged(false);
+    try {
+      await logMeal(dish.id, servings, restaurantId);
+      setLogged(true);
+    } catch {
+      // swallow — button just won't show the "Logged ✓" confirmation
+    } finally {
+      setLogging(false);
+    }
   };
 
   return (
@@ -93,6 +113,25 @@ export default function DishCard({ dish, restaurantId }) {
           </div>
         ))}
       </div>
+
+      {/* M2-1 — log this dish as a meal (food seekers only) */}
+      {user?.role === "user" && (
+        <div className="log-meal-row">
+          <input
+            type="number"
+            min={0.25}
+            step={0.25}
+            value={servings}
+            onChange={(e) => setServings(Number(e.target.value))}
+            className="servings-input"
+            aria-label="Servings"
+          />
+          <button className="log-meal-btn" onClick={handleLogMeal} disabled={logging}>
+            {logging ? "Logging…" : "🍽️ Log this meal"}
+          </button>
+          {logged && <span className="logged-msg">Logged ✓</span>}
+        </div>
+      )}
 
       {/* Toggle button for dish reviews */}
       <button
