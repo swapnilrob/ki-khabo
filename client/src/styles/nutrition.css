@@ -1,0 +1,178 @@
+.health-page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 24px;
+}
+.health-page h1 {
+  font-size: 24px;
+  margin: 12px 0 4px;
+}
+
+.health-card {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 18px 20px;
+  margin-top: 18px;
+}
+.health-card h2 {
+  font-size: 17px;
+  margin: 0 0 12px;
+}
+.health-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.calorie-bar-track {
+  width: 100%;
+  height: 14px;
+  background: #f0efe9;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.calorie-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #2563eb, #d64545);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+.calorie-numbers {
+  margin: 8px 0 0;
+  font-size: 15px;
+}
+
+.macro-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin-top: 16px;
+}
+.macro-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #faf9f5;
+  border-radius: 8px;
+  padding: 10px 4px;
+}
+.macro-val {
+  font-weight: 700;
+  font-size: 14px;
+}
+.macro-lbl {
+  font-size: 11px;
+  color: #888;
+  margin-top: 2px;
+}
+
+.goal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+.goal-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.goal-form input {
+  font-weight: 400;
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  max-width: 160px;
+}
+.goal-form button[type="submit"] {
+  background: #d64545;
+  color: #fff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.secondary-btn {
+  background: #f0efe9;
+  color: #4a4a4a;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.meal-log-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.meal-log-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 14px;
+}
+.meal-log-item:last-child {
+  border-bottom: none;
+}
+
+.error {
+  color: #b3261e;
+  font-size: 14px;
+}
+
+/* ── Log-this-meal control, used inside DishCard ── */
+.log-meal-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+.servings-input {
+  width: 56px;
+  padding: 6px 8px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 13px;
+}
+.log-meal-btn {
+  background: #16a34a;
+  color: #fff;
+  border: none;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.log-meal-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.logged-msg {
+  color: #16a34a;
+  font-size: 13px;
+  font-weight: 600;
+}
