@@ -1,0 +1,121 @@
+.planner-wrap {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.plan-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.plan-card h3 {
+  margin: 0 0 4px;
+  font-size: 17px;
+}
+
+.day-tab {
+  display: inline-block;
+  padding: 8px 16px;
+  margin: 0 6px 8px 0;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 2px solid #ddd;
+  background: #fff;
+  text-transform: capitalize;
+}
+.day-tab.active {
+  border-color: #d64545;
+  background: #d64545;
+  color: #fff;
+}
+
+.slot-section {
+  margin: 14px 0;
+  padding: 14px;
+  background: #fafafa;
+  border-radius: 8px;
+}
+.slot-title {
+  font-weight: 700;
+  font-size: 14px;
+  text-transform: capitalize;
+  margin-bottom: 8px;
+  color: #555;
+}
+
+.meal-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 10px;
+  background: #fff;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.totals-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 8px;
+  margin-top: 14px;
+  padding: 14px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+.totals-bar .t-cell {
+  text-align: center;
+}
+.totals-bar .t-val {
+  font-weight: 700;
+  font-size: 16px;
+  display: block;
+}
+.totals-bar .t-lbl {
+  font-size: 10px;
+  color: #888;
+  text-transform: uppercase;
+}
+.over-limit {
+  color: #c0392b;
+}
+.under-limit {
+  color: #1e7d34;
+}
+
+.dish-picker {
+  background: #fff;
+  border-radius: 10px;
+  padding: 16px;
+  margin-top: 12px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+}
+.dish-picker input,
+.dish-picker select {
+  padding: 9px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  margin-right: 8px;
+  margin-bottom: 8px;
+}
+.dish-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+}
+.dish-option:hover {
+  background: #f9f5f5;
+}

@@ -22,6 +22,8 @@ import OwnerMenu from "./pages/OwnerMenu";
 
 import Discover from "./pages/Discover";
 
+import MealPlanner from "./pages/MealPlanner";
+
 // Sends each role to the right dashboard after login
 function DashboardRedirect() {
   const { user, loading } = useAuth();
@@ -81,6 +83,16 @@ export default function App() {
         element={
           <ProtectedRoute allow={["user"]}>
             <HealthDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* M2-3 — Swapnil */}
+      <Route
+        path="/app/meal-planner"
+        element={
+          <ProtectedRoute allow={["user"]}>
+            <MealPlanner />
           </ProtectedRoute>
         }
       />
