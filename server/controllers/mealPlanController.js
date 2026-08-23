@@ -1,0 +1,172 @@
+import asyncHandler from "express-async-handler";
+import mongoose from "mongoose";
+import MealPlan from "../models/MealPlan.js";
+import Dish from "../models/Dish.js";
+
+// ─────────────────────────────────────────────────────────────
+// Helpers
+// ─────────────────────────────────────────────────────────────
+
+const getDailyTotals = (meals) => {
+  // TODO: Implement this
+  const getDailyTotals = async (meals) => {
+  const dishIds = meals.map((m) => m.dish);
+  const dishes = await Dish.find({ _id: { $in: dishIds } });
+
+  const totals = dishes.reduce(
+    (acc, dish) => {
+      const n = dish.nutrition;
+      acc.calories += n.calories;
+      acc.protein += n.protein;
+      acc.carbohydrates += n.carbohydrates;
+      acc.fat += n.fat;
+      acc.sugar += n.sugar;
+      acc.sodium += n.sodium;
+      acc.fiber += n.fiber;
+      acc.cost += dish.price;
+      return acc;
+    },
+    {
+      calories: 0,
+      protein: 0,
+      carbohydrates: 0,
+      fat: 0,
+      sugar: 0,
+      sodium: 0,
+      fiber: 0,
+      cost: 0,
+    }
+  );
+
+  return totals;
+};
+};
+
+// ─────────────────────────────────────────────────────────────
+// CRUD operations
+// ─────────────────────────────────────────────────────────────
+
+// @desc   Get all meal plans for the logged-in user
+// @route  GET /api/meal-planner/my-plans
+// @access Private
+export const getMyMealPlans = asyncHandler(async (req, res) => {
+  // TODO: Implement this
+  const plans = await MealPlan.find({ user: req.user._id })
+    .select("name dailyCalorieTarget budgetPerDay isActive createdAt")
+    .sort({ createdAt: -1 });
+
+  res.json({ success: true, plans });
+});
+
+// @desc   Get a single meal plan by ID
+// @route  GET /api/meal-planner/:id
+// @access Private
+export const getMealPlanById = asyncHandler(async (req, res) => {
+  // TODO: Implement this
+  export const getMealPlanById = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    res.status(400);
+    throw new Error("Invalid meal plan ID");
+  }
+
+  const plan = await MealPlan.findOne({ _id: id, user: req.user._id });
+  if (!plan) {
+    res.status(404);
+    throw new Error("Meal plan not found");
+  }
+
+  const planWithTotals = {
+    ...plan.toObject(),
+    days: await Promise.all(
+      plan.days.map(async (day) => ({
+        ...day.toObject(),
+        totals: await getDailyTotals(day.meals),
+      }))
+    ),
+  };
+
+  res.json({ success: true, plan: planWithTotals });
+});
+});
+
+// @desc   Create a new meal plan
+// @route  POST /api/meal-planner
+// @access Private
+export const createMealPlan = asyncHandler(async (req, res) => {
+  // TODO: Implement this
+  export const createMealPlan = asyncHandler(async (req, res) => {
+  const { name, dailyCalorieTarget, budgetPerDay, days } = req.body;
+
+  if (!name || !dailyCalorieTarget) {
+    res.status(400);
+    throw new Error("Name and calorie target are required");
+  }
+
+  const plan = await MealPlan.create({
+    user: req.user._id,
+    name,
+    dailyCalorieTarget,
+    budgetPerDay: budgetPerDay || 0,
+    days: days || [],
+  });
+
+  res.status(201).json({ success: true, plan });
+});
+});
+
+// @desc   Update a meal plan
+// @route  PUT /api/meal-planner/:id
+// @access Private
+export const updateMealPlan = asyncHandler(async (req, res) => {
+  // TODO: Implement this
+  export const updateMealPlan = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    res.status(400);
+    throw new Error("Invalid meal plan ID");
+  }
+
+  const plan = await MealPlan.findOne({ _id: id, user: req.user._id });
+  if (!plan) {
+    res.status(404);
+    throw new Error("Meal plan not found");
+  }
+
+  const { name, dailyCalorieTarget, budgetPerDay, days, isActive } = req.body;
+
+  if (name) plan.name = name;
+  if (dailyCalorieTarget) plan.dailyCalorieTarget = dailyCalorieTarget;
+  if (budgetPerDay) plan.budgetPerDay = budgetPerDay;
+  if (days) plan.days = days;
+  if (isActive !== undefined) plan.isActive = isActive;
+
+  await plan.save();
+
+  res.json({ success: true, plan });
+});
+});
+
+// @desc   Delete a meal plan
+// @route  DELETE /api/meal-planner/:id
+// @access Private
+export const deleteMealPlan = asyncHandler(async (req, res) => {
+  // TODO: Implement this
+  export const deleteMealPlan = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    res.status(400);
+    throw new Error("Invalid meal plan ID");
+  }
+
+  const plan = await MealPlan.findOne({ _id: id, user: req.user._id });
+  if (!plan) {
+    res.status(404);
+    throw new Error("Meal plan not found");
+  }
+
+  await plan.deleteOne();
+
+  res.json({ success: true, id });
+});
+});
