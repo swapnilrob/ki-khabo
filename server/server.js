@@ -18,6 +18,8 @@ import foodListRoutes from "./routes/foodListRoutes.js";
 import feedRoutes from "./routes/feedRoutes.js";
 import nutritionRoutes from "./routes/nutritionRoutes.js";
 
+import recommendationRoutes from "./routes/recommendationRoutes.js";
+
 dotenv.config();
 connectDB();
 
@@ -40,6 +42,7 @@ app.use("/api/nutrition", nutritionRoutes);      // Mostahid (M2-1)
 app.use("/api/reviews", reviewRoutes);           // Shakib (M1-4)
 app.use("/api/dishes", dishRoutes);              // Swapnil (M1-2)
 app.use("/api/discover", discoverRoutes);        // Noman (M1-1)
+app.use("/api/recommendations", recommendationRoutes); // Noman (M2-2)
 app.use("/api/follows", followRoutes);           // Shakib (M2-4)
 app.use("/api/saved-dishes", savedDishRoutes);   // Shakib (M2-4)
 app.use("/api/food-lists", foodListRoutes);      // Shakib (M2-4)
