@@ -19,6 +19,10 @@ export default function UserDashboard() {
       <p style={{ marginTop: 8 }}>
         <Link to="/discover">🔍 Discover &amp; search restaurants</Link>
       </p>
+      <p style={{ marginTop: 8 }}>
+        <Link to="/app/meal-planner">📅 Plan my meals</Link>
+      </p>
     </div>
+    
   );
 }
