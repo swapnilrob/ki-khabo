@@ -4,12 +4,10 @@ import MealPlan from "../models/MealPlan.js";
 import Dish from "../models/Dish.js";
 
 // ─────────────────────────────────────────────────────────────
-// Helpers
+// Helper — compute calorie + macro + cost totals for one day
 // ─────────────────────────────────────────────────────────────
 
-const getDailyTotals = (meals) => {
-  // TODO: Implement this
-  const getDailyTotals = async (meals) => {
+const getDailyTotals = async (meals) => {
   const dishIds = meals.map((m) => m.dish);
   const dishes = await Dish.find({ _id: { $in: dishIds } });
 
@@ -40,17 +38,15 @@ const getDailyTotals = (meals) => {
 
   return totals;
 };
-};
 
 // ─────────────────────────────────────────────────────────────
-// CRUD operations
+// CRUD
 // ─────────────────────────────────────────────────────────────
 
 // @desc   Get all meal plans for the logged-in user
 // @route  GET /api/meal-planner/my-plans
 // @access Private
 export const getMyMealPlans = asyncHandler(async (req, res) => {
-  // TODO: Implement this
   const plans = await MealPlan.find({ user: req.user._id })
     .select("name dailyCalorieTarget budgetPerDay isActive createdAt")
     .sort({ createdAt: -1 });
@@ -58,12 +54,10 @@ export const getMyMealPlans = asyncHandler(async (req, res) => {
   res.json({ success: true, plans });
 });
 
-// @desc   Get a single meal plan by ID
+// @desc   Get a single meal plan with computed daily totals
 // @route  GET /api/meal-planner/:id
 // @access Private
 export const getMealPlanById = asyncHandler(async (req, res) => {
-  // TODO: Implement this
-  export const getMealPlanById = asyncHandler(async (req, res) => {
   const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) {
     res.status(400);
@@ -88,14 +82,11 @@ export const getMealPlanById = asyncHandler(async (req, res) => {
 
   res.json({ success: true, plan: planWithTotals });
 });
-});
 
 // @desc   Create a new meal plan
 // @route  POST /api/meal-planner
 // @access Private
 export const createMealPlan = asyncHandler(async (req, res) => {
-  // TODO: Implement this
-  export const createMealPlan = asyncHandler(async (req, res) => {
   const { name, dailyCalorieTarget, budgetPerDay, days } = req.body;
 
   if (!name || !dailyCalorieTarget) {
@@ -113,14 +104,11 @@ export const createMealPlan = asyncHandler(async (req, res) => {
 
   res.status(201).json({ success: true, plan });
 });
-});
 
 // @desc   Update a meal plan
 // @route  PUT /api/meal-planner/:id
 // @access Private
 export const updateMealPlan = asyncHandler(async (req, res) => {
-  // TODO: Implement this
-  export const updateMealPlan = asyncHandler(async (req, res) => {
   const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) {
     res.status(400);
@@ -137,7 +125,7 @@ export const updateMealPlan = asyncHandler(async (req, res) => {
 
   if (name) plan.name = name;
   if (dailyCalorieTarget) plan.dailyCalorieTarget = dailyCalorieTarget;
-  if (budgetPerDay) plan.budgetPerDay = budgetPerDay;
+  if (budgetPerDay !== undefined) plan.budgetPerDay = budgetPerDay;
   if (days) plan.days = days;
   if (isActive !== undefined) plan.isActive = isActive;
 
@@ -145,14 +133,12 @@ export const updateMealPlan = asyncHandler(async (req, res) => {
 
   res.json({ success: true, plan });
 });
-});
 
 // @desc   Delete a meal plan
+// @route  DELETE
 // @route  DELETE /api/meal-planner/:id
 // @access Private
 export const deleteMealPlan = asyncHandler(async (req, res) => {
-  // TODO: Implement this
-  export const deleteMealPlan = asyncHandler(async (req, res) => {
   const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) {
     res.status(400);
@@ -168,5 +154,4 @@ export const deleteMealPlan = asyncHandler(async (req, res) => {
   await plan.deleteOne();
 
   res.json({ success: true, id });
-});
 });
