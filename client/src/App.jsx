@@ -23,6 +23,7 @@ import OwnerMenu from "./pages/OwnerMenu";
 import Discover from "./pages/Discover";
 
 import MealPlanner from "./pages/MealPlanner";
+import Recommendations from "./pages/Recommendations";
 
 // Sends each role to the right dashboard after login
 function DashboardRedirect() {
@@ -100,7 +101,16 @@ export default function App() {
       <Route path="/reviews-demo" element={<ReviewDemo />} />
       <Route path="/feed" element={<ProtectedRoute allow={["user"]}><Feed /></ProtectedRoute>} />
       <Route path="/saved-dishes" element={<ProtectedRoute allow={["user"]}><SavedDishes /></ProtectedRoute>} />
-      <Route path="/food-lists" element={<FoodLists />} /> 
+      <Route path="/food-lists" element={<FoodLists />} />
+      {/* M2-2 — Noman */}
+      <Route
+        path="/app/recommendations"
+        element={
+          <ProtectedRoute allow={["user"]}>
+            <Recommendations />
+          </ProtectedRoute>
+        }
+      /> 
       {/* M1-1 — Noman */}
       <Route path="/discover" element={<Discover />} />
 

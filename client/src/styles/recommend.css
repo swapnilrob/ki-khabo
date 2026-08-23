@@ -1,0 +1,56 @@
+.rec-context {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  background: #eef6ff;
+  border: 1px solid #d5e6fb;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: #1a56db;
+  margin: 8px 0 16px;
+}
+.rec-context small { color: #6b7a90; }
+
+.rec-controls { display: flex; gap: 8px; margin-bottom: 16px; }
+.rec-controls select,
+.rec-controls input {
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.rec-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+.rec-card-side {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+.rec-price { font-weight: 700; color: #222; }
+.rec-cal { font-size: 12px; color: #666; }
+
+.rec-reasons { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px; }
+.reason-chip {
+  background: #f0f7f0;
+  color: #2e7d32;
+  border: 1px solid #d6ead6;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
