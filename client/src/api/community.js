@@ -16,6 +16,9 @@ export const getFollowers = (userId) =>
 export const getFollowing = (userId) =>
   api.get(`/follows/${userId}/following`).then((r) => r.data);
 
+export const searchUsers = (q) =>
+  api.get(`/follows/search`, { params: { q } }).then((r) => r.data); 
+
 // ── Saved Dishes ──
 export const saveDish = (dish, collectionName) =>
   api.post("/saved-dishes", { dish, collectionName }).then((r) => r.data);
