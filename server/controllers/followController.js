@@ -99,3 +99,27 @@ export const getFollowStatus = asyncHandler(async (req, res) => {
   const counts = await Follow.getCounts(req.params.userId);
   res.json({ success: true, isFollowing: !!edge, counts });
 });
+// @desc   Search users by name (for the follow/discover UI)
+// @route  GET /api/follows/search?q=shakib
+// @access Private (user)
+export const searchUsers = asyncHandler(async (req, res) => {
+  const { q } = req.query;
+  if (!q || q.trim().length < 2) {
+    return res.json({ success: true, users: [] });
+  }
+
+  const regex = new RegExp(q.trim(), "i");
+  const users = await User.find({
+    name: regex,
+    role: "user",
+    _id: { $ne: req.user._id }, // exclude yourself
+  })
+    .select("name email location")
+    .limit(10)
+    .lean();
+
+  res.json({
+    success: true,
+    users: users.map((u) => ({ id: u._id, name: u.name, email: u.email, location: u.location })),
+  });
+});  
