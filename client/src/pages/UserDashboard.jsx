@@ -22,7 +22,12 @@ export default function UserDashboard() {
       <p style={{ marginTop: 8 }}>
         <Link to="/app/meal-planner">📅 Plan my meals</Link>
       </p>
+      <p style={{ marginTop: 8 }}>
+        <Link to="/app/recommendations">Recommended for you →</Link>
+      </p>
     </div>
+
+    
     
   );
 }
