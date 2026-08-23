@@ -25,9 +25,18 @@ export default function UserDashboard() {
       <p style={{ marginTop: 8 }}>
         <Link to="/app/recommendations">Recommended for you →</Link>
       </p>
+      <p style={{ marginTop: 8 }}>
+        <Link to="/feed">📰 My Feed</Link>
+      </p>
+      <p style={{ marginTop: 8 }}>
+        <Link to="/saved-dishes">💾 Saved Dishes</Link>
+      </p>
+      <p style={{ marginTop: 8 }}>
+        <Link to="/food-lists">📋 Food Lists</Link>
+      </p>
+      <p style={{ marginTop: 8 }}>
+        <Link to="/reviews-demo">⭐ Reviews</Link>
+      </p>
     </div>
-
-    
-    
   );
 }
