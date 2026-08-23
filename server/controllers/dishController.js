@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import Dish from "../models/Dish.js";
 import Restaurant from "../models/Restaurant.js";
 import Review from "../models/Review.js";
+import { applyDietaryFilter } from "../utils/applyDietaryFilter.js";
 
 // Guard against invalid ObjectIds — without this Mongoose throws a CastError
 // that the shared error middleware turns into an ugly 500.
@@ -64,10 +65,15 @@ export const getRestaurantProfile = asyncHandler(async (req, res) => {
     throw new Error("Restaurant not found or not yet approved");
   }
 
-  const dishes = await Dish.find({
+  const allDishes = await Dish.find({
     restaurant: restaurantId,
     isAvailable: true,
   }).sort({ category: 1, name: 1 });
+
+  // M1-3 — hide anything unsafe (allergens) or off-diet for whoever's
+  // logged in. req.user is only set when optionalAuth found a valid token,
+  // so guests still see the full menu.
+  const { visible: dishes, hiddenCount } = applyDietaryFilter(allDishes, req.user);
 
   // Group the menu by category so the frontend can render sections directly
   const menuByCategory = dishes.reduce((acc, d) => {
@@ -91,6 +97,8 @@ export const getRestaurantProfile = asyncHandler(async (req, res) => {
       totalReviews: restaurant.totalReviews,
     },
     menuCount: dishes.length,
+    hiddenCount,
+    filtered: hiddenCount > 0,
     menuByCategory,
     menu: dishes.map(publicDish),
   });

@@ -14,6 +14,9 @@ export default function UserDashboard() {
         <Link to="/app/preferences">🍽️ Edit profile &amp; dietary preferences</Link>
       </p>
       <p style={{ marginTop: 8 }}>
+        <Link to="/app/health">📊 View my Health Dashboard</Link>
+      </p>
+      <p style={{ marginTop: 8 }}>
         <Link to="/discover">🔍 Discover &amp; search restaurants</Link>
       </p>
     </div>

@@ -12,6 +12,11 @@ import reviewRoutes from "./routes/reviewRoutes.js";
 import dishRoutes from "./routes/dishRoutes.js";
 import discoverRoutes from "./routes/discoverRoutes.js";
 import mealPlannerRoutes from "./routes/mealPlanRoutes.js";
+import followRoutes from "./routes/followRoutes.js";
+import savedDishRoutes from "./routes/savedDishRoutes.js";
+import foodListRoutes from "./routes/foodListRoutes.js";
+import feedRoutes from "./routes/feedRoutes.js";
+import nutritionRoutes from "./routes/nutritionRoutes.js";
 
 dotenv.config();
 connectDB();
@@ -31,10 +36,14 @@ app.get("/api/health", (req, res) =>
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/restaurants", restaurantRoutes);
-// app.use("/api/nutrition", nutritionRoutes);      // Mostahid
+app.use("/api/nutrition", nutritionRoutes);      // Mostahid (M2-1)
 app.use("/api/reviews", reviewRoutes);           // Shakib (M1-4)
 app.use("/api/dishes", dishRoutes);              // Swapnil (M1-2)
 app.use("/api/discover", discoverRoutes);        // Noman (M1-1)
+app.use("/api/follows", followRoutes);           // Shakib (M2-4)
+app.use("/api/saved-dishes", savedDishRoutes);   // Shakib (M2-4)
+app.use("/api/food-lists", foodListRoutes);      // Shakib (M2-4)
+app.use("/api/feed", feedRoutes);                 // Shakib (M2-4) 
 // app.use("/api/orders", orderRoutes);             // Noman
 app.use("/api/meal-planner", mealPlannerRoutes); // Swapnil
 // ───────────────────────────────────────────────────────────────────
