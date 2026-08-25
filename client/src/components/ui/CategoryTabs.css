@@ -1,0 +1,49 @@
+.kk-tabs {
+  display: flex;
+  align-items: center;
+  gap: var(--kk-space-1);
+  overflow-x: auto;
+  padding-bottom: var(--kk-space-2);
+
+  /* hide scrollbar but keep scroll */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.kk-tabs::-webkit-scrollbar { display: none; }
+
+.kk-tabs__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--kk-space-2);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--kk-text-secondary);
+  padding: var(--kk-space-2) var(--kk-space-4);
+  border-radius: var(--kk-radius-pill);
+  white-space: nowrap;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+}
+
+.kk-tabs__tab:hover {
+  color: var(--kk-text);
+  background: var(--kk-white);
+}
+
+.kk-tabs__tab--active {
+  color: var(--kk-orange);
+  background: var(--kk-orange-light);
+  border-color: var(--kk-orange);
+  font-weight: 600;
+}
+
+.kk-tabs__chevron {
+  font-size: 16px;
+  color: var(--kk-text-muted);
+  line-height: 1;
+  margin-left: var(--kk-space-1);
+}
+
+.kk-tabs__tab--active .kk-tabs__chevron {
+  color: var(--kk-orange);
+}

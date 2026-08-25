@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import api from "../api/axios";
-import { useAuth } from "../context/AuthContext";
+import AppLayout from "../components/AppLayout";
+import { Card, Badge } from "../components/ui";
+import "./AdminDashboard.css";
 
 export default function AdminDashboard() {
-  const { logout } = useAuth();
   const [stats, setStats] = useState(null);
   const [pending, setPending] = useState([]);
   const [msg, setMsg] = useState("");
@@ -17,67 +18,103 @@ export default function AdminDashboard() {
     setPending(r.data.restaurants);
   };
 
-  useEffect(() => {
-    load();
-  }, []);
+  useEffect(() => { load(); }, []);
 
   const decide = async (id, status) => {
     const rejectionReason =
       status === "rejected" ? window.prompt("Reason for rejection:") || "" : "";
     await api.patch(`/admin/restaurants/${id}/status`, { status, rejectionReason });
     setMsg(`Restaurant ${status}.`);
+    setTimeout(() => setMsg(""), 3000);
     load();
   };
 
   return (
-    <div style={{ padding: 24 }}>
-      <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h2>Admin Dashboard</h2>
-        <button onClick={logout}>Log out</button>
-      </header>
+    <AppLayout>
+      <h2 className="kk-page-title">Admin Dashboard</h2>
+      <p className="kk-page-subtitle">Platform overview and management</p>
 
-      {msg && <p style={{ marginTop: 12, color: "#2e7d32" }}>{msg}</p>}
+      {msg && <div className="kk-toast">{msg}</div>}
 
+      {/* ── Stats ── */}
       {stats && (
-        <div className="stat-grid">
-          <div>Users: {stats.totalUsers}</div>
-          <div>Owners: {stats.totalOwners}</div>
-          <div>Pending: {stats.pendingRestaurants}</div>
-          <div>Approved: {stats.approvedRestaurants}</div>
+        <div className="kk-stat-grid">
+          <Card className="kk-stat-card">
+            <span className="kk-stat-card__val">{stats.totalUsers}</span>
+            <span className="kk-stat-card__label">Users</span>
+          </Card>
+          <Card className="kk-stat-card">
+            <span className="kk-stat-card__val">{stats.totalOwners}</span>
+            <span className="kk-stat-card__label">Owners</span>
+          </Card>
+          <Card className="kk-stat-card">
+            <span className="kk-stat-card__val">{stats.premiumSubscribers}</span>
+            <span className="kk-stat-card__label">Premium</span>
+          </Card>
+          <Card className="kk-stat-card">
+            <span className="kk-stat-card__val kk-stat-card__val--pending">{stats.pendingRestaurants}</span>
+            <span className="kk-stat-card__label">Pending</span>
+          </Card>
+          <Card className="kk-stat-card">
+            <span className="kk-stat-card__val kk-stat-card__val--approved">{stats.approvedRestaurants}</span>
+            <span className="kk-stat-card__label">Approved</span>
+          </Card>
         </div>
       )}
 
-      <h3 style={{ marginTop: 16 }}>Pending applications ({pending.length})</h3>
-      {pending.length === 0 && <p>No pending applications.</p>}
+      {/* ── Pending queue ── */}
+      <h3 className="kk-section-title">
+        Pending applications
+        <Badge variant="neutral">{pending.length}</Badge>
+      </h3>
 
-      {pending.length > 0 && (
-        <table>
-          <thead>
-            <tr>
-              <th>Business</th><th>Owner</th><th>Trade License</th><th>City</th><th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {pending.map((r) => (
-              <tr key={r._id}>
-                <td>{r.businessName}</td>
-                <td>{r.owner?.name}<br /><small>{r.owner?.email}</small></td>
-                <td>{r.tradeLicenseNo}</td>
-                <td>{r.city}</td>
-                <td>
-                  <button onClick={() => decide(r._id, "approved")}>Approve</button>
-                  <button
-                    onClick={() => decide(r._id, "rejected")}
-                    style={{ background: "#777" }}
-                  >
-                    Reject
-                  </button>
-                </td>
+      {pending.length === 0 ? (
+        <Card className="kk-empty">No pending applications right now.</Card>
+      ) : (
+        <div className="kk-table-wrap">
+          <table className="kk-table">
+            <thead>
+              <tr>
+                <th>Business</th>
+                <th>Owner</th>
+                <th>Trade License</th>
+                <th>City</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {pending.map((r) => (
+                <tr key={r._id}>
+                  <td className="kk-table__primary">{r.businessName}</td>
+                  <td>
+                    {r.owner?.name}
+                    <br />
+                    <span className="kk-table__small">{r.owner?.email}</span>
+                  </td>
+                  <td>
+                    <code className="kk-table__code">{r.tradeLicenseNo}</code>
+                  </td>
+                  <td>{r.city}</td>
+                  <td className="kk-table__actions">
+                    <button
+                      className="kk-btn kk-btn--primary kk-btn--sm"
+                      onClick={() => decide(r._id, "approved")}
+                    >
+                      Approve
+                    </button>
+                    <button
+                      className="kk-btn kk-btn--danger kk-btn--sm"
+                      onClick={() => decide(r._id, "rejected")}
+                    >
+                      Reject
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
-    </div>
+    </AppLayout>
   );
 }

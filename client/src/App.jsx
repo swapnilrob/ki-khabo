@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import OwnerReviews from "./pages/OwnerReviews";
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -122,6 +123,14 @@ export default function App() {
         element={
           <ProtectedRoute allow={["owner"]}>
             <OwnerMenu />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/owner/reviews"
+        element={
+          <ProtectedRoute allow={["owner"]}>
+            <OwnerReviews />
           </ProtectedRoute>
         }
       />

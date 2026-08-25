@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import Navbar from "../components/Navbar";
+import "../components/AuthStyles.css";
 
 export default function Login() {
   const { login } = useAuth();
@@ -27,29 +29,59 @@ export default function Login() {
   };
 
   return (
-    <div className="auth-page">
-      <form onSubmit={handleSubmit} className="auth-card">
-        <h2>Log in to Ki Khabo</h2>
-        {error && <p className="error">{error}</p>}
+    <div className="kk-app">
+      <Navbar />
+      <div className="kk-auth-page">
+        <div className="kk-auth-card">
+          <h2>Welcome back</h2>
+          <p className="kk-auth-subtitle">Log in to your Ki Khabo account</p>
 
-        <input
-          name="email" type="email" placeholder="Email"
-          value={form.email} onChange={handleChange} required
-        />
-        <input
-          name="password" type="password" placeholder="Password"
-          value={form.password} onChange={handleChange} required
-        />
+          {error && <div className="kk-error">{error}</div>}
 
-        <button type="submit" disabled={busy}>
-          {busy ? "Logging in…" : "Log in"}
-        </button>
+          <div className="kk-input-group">
+            <label htmlFor="email">Email</label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              className="kk-input"
+              placeholder="you@example.com"
+              value={form.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-        <p>
-          New here? <Link to="/register">Create an account</Link> ·{" "}
-          <Link to="/register-owner">Register a restaurant</Link>
-        </p>
-      </form>
+          <div className="kk-input-group">
+            <label htmlFor="password">Password</label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              className="kk-input"
+              placeholder="Enter your password"
+              value={form.password}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <button
+            className="kk-btn kk-btn--primary"
+            style={{ width: "100%", marginTop: 8 }}
+            onClick={handleSubmit}
+            disabled={busy}
+          >
+            {busy ? "Logging in…" : "Log in"}
+          </button>
+
+          <div className="kk-auth-footer">
+            New here? <Link to="/register">Create an account</Link>
+            {" · "}
+            <Link to="/register-owner">Register a restaurant</Link>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

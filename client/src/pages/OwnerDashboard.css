@@ -1,0 +1,92 @@
+/* ═══════════════════════════════════════════════════════════════
+   Owner Dashboard
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Status banner ── */
+.kk-status-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--kk-space-4);
+  padding: var(--kk-space-5);
+  border-radius: var(--kk-radius);
+  margin-bottom: var(--kk-space-5);
+}
+
+.kk-status-banner--pending {
+  background: var(--kk-orange-pale);
+  border: 1px solid var(--kk-orange-light);
+}
+
+.kk-status-banner--rejected {
+  background: var(--kk-red-light);
+  border: 1px solid #fecaca;
+}
+
+.kk-status-banner__icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.kk-status-banner strong {
+  display: block;
+  font-size: 14px;
+  margin-bottom: var(--kk-space-1);
+}
+
+.kk-status-banner p {
+  font-size: 13px;
+  color: var(--kk-text-secondary);
+}
+
+/* ── Info card ── */
+.kk-owner-info {
+  margin-bottom: var(--kk-space-6);
+}
+
+.kk-owner-info__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--kk-space-3);
+}
+
+.kk-owner-info h3 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.kk-owner-info__sub {
+  font-size: 13px;
+  color: var(--kk-text-muted);
+  margin-top: var(--kk-space-1);
+}
+
+/* ── Feature cards grid ── */
+.kk-owner-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--kk-space-5);
+}
+
+.kk-owner-card {
+  text-align: center;
+  padding: var(--kk-space-6) var(--kk-space-5);
+}
+
+.kk-owner-card__icon {
+  font-size: 28px;
+  display: block;
+  margin-bottom: var(--kk-space-3);
+}
+
+.kk-owner-card h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: var(--kk-space-1);
+}
+
+.kk-owner-card p {
+  font-size: 12.5px;
+  color: var(--kk-text-muted);
+}
