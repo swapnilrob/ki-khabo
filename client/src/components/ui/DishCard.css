@@ -1,0 +1,144 @@
+/* ═══════════════════════════════════════════════════════════════
+   Dish Card
+   ═══════════════════════════════════════════════════════════════ */
+
+.kk-dish-card {
+  background: var(--kk-white);
+  border: 1px solid var(--kk-border);
+  border-radius: var(--kk-radius);
+  overflow: hidden;
+  box-shadow: var(--kk-shadow);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.kk-dish-card:hover {
+  box-shadow: var(--kk-shadow-hover);
+  transform: translateY(-2px);
+}
+
+/* ── Image ── */
+.kk-dish-card__img-wrap {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--kk-bg);
+}
+
+.kk-dish-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.kk-dish-card:hover .kk-dish-card__img {
+  transform: scale(1.04);
+}
+
+.kk-dish-card__img-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  color: var(--kk-text-muted);
+}
+
+/* Favorite heart */
+.kk-dish-card__fav {
+  position: absolute;
+  top: var(--kk-space-2);
+  right: var(--kk-space-2);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--kk-text-muted);
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.kk-dish-card__fav svg {
+  width: 16px;
+  height: 16px;
+}
+
+.kk-dish-card__fav:hover,
+.kk-dish-card__fav--active {
+  color: var(--kk-green);
+  background: rgba(255,255,255,0.95);
+}
+
+/* ── Body ── */
+.kk-dish-card__body {
+  padding: var(--kk-space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--kk-space-2);
+  flex: 1;
+}
+
+.kk-dish-card__name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--kk-text);
+  line-height: 1.3;
+}
+
+.kk-dish-card__desc {
+  font-size: 12.5px;
+  color: var(--kk-text-muted);
+  line-height: 1.45;
+}
+
+.kk-dish-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--kk-space-1);
+}
+
+.kk-dish-card__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--kk-space-3);
+  margin-top: auto;
+}
+
+.kk-dish-card__cal {
+  font-family: var(--kk-font-mono);
+  font-size: 11px;
+  color: var(--kk-text-muted);
+}
+
+/* ── Footer ── */
+.kk-dish-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--kk-space-2);
+  border-top: 1px solid var(--kk-border-light);
+  margin-top: var(--kk-space-2);
+}
+
+.kk-dish-card__price {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--kk-text);
+}
+
+.kk-dish-card__actions {
+  display: flex;
+  gap: var(--kk-space-2);
+}
+
+/* ── Expandable area ── */
+.kk-dish-card__expand {
+  padding: 0 var(--kk-space-4) var(--kk-space-4);
+  border-top: 1px solid var(--kk-border-light);
+}

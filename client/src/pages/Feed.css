@@ -1,0 +1,238 @@
+/* ═══════════════════════════════════════════════════════════════
+   Community Feed
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Sidebar ── */
+.feed-sidebar .feed-search-card,
+.feed-sidebar .feed-nav-card {
+  padding: var(--kk-space-4);
+}
+
+.feed-search-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: var(--kk-space-3);
+}
+
+.feed-search-row {
+  display: flex;
+  gap: var(--kk-space-2);
+}
+
+.feed-search-row .kk-input {
+  flex: 1;
+  height: 36px;
+  font-size: 13px;
+}
+
+.feed-search-results {
+  margin-top: var(--kk-space-3);
+  border-top: 1px solid var(--kk-border-light);
+  padding-top: var(--kk-space-3);
+}
+
+.feed-search-user {
+  display: flex;
+  align-items: center;
+  gap: var(--kk-space-3);
+  padding: var(--kk-space-2) 0;
+}
+
+.feed-search-user + .feed-search-user {
+  border-top: 1px solid var(--kk-border-light);
+}
+
+.feed-search-user-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.feed-search-user-name {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--kk-text);
+}
+
+.feed-search-user-email {
+  display: block;
+  font-size: 11px;
+  color: var(--kk-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Sidebar nav links ── */
+.feed-nav-card {
+  margin-top: var(--kk-space-4);
+}
+
+.feed-nav-link {
+  display: flex;
+  align-items: center;
+  gap: var(--kk-space-3);
+  width: 100%;
+  padding: var(--kk-space-3) var(--kk-space-2);
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--kk-text-secondary);
+  border-radius: var(--kk-radius-sm);
+  transition: background 0.12s ease, color 0.12s ease;
+  text-align: left;
+}
+
+.feed-nav-link:hover {
+  background: var(--kk-bg);
+  color: var(--kk-text);
+}
+
+/* ── Avatar ── */
+.feed-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--kk-orange-light);
+  color: var(--kk-orange);
+  font-weight: 700;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.feed-avatar--sm {
+  width: 32px;
+  height: 32px;
+  font-size: 13px;
+}
+
+/* ── Feed list ── */
+.feed-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--kk-space-3);
+}
+
+.feed-item {
+  padding: var(--kk-space-4);
+}
+
+.feed-empty {
+  text-align: center;
+  padding: var(--kk-space-8) var(--kk-space-5);
+  color: var(--kk-text-muted);
+  font-size: 14px;
+}
+
+/* ── Feed item header ── */
+.feed-item-header {
+  display: flex;
+  align-items: center;
+  gap: var(--kk-space-3);
+  margin-bottom: var(--kk-space-3);
+}
+
+.feed-item-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.feed-item-user {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--kk-text);
+}
+
+.feed-item-time {
+  display: block;
+  font-size: 11px;
+  color: var(--kk-text-muted);
+}
+
+/* ── Activity cards ── */
+.feed-activity {
+  border-radius: var(--kk-radius-sm);
+  padding: var(--kk-space-3) var(--kk-space-4);
+}
+
+.feed-activity--review {
+  background: var(--kk-orange-pale);
+}
+
+.feed-activity--saved {
+  background: var(--kk-green-light);
+}
+
+.feed-activity--list {
+  background: var(--kk-blue-light);
+}
+
+.feed-activity-top {
+  display: flex;
+  align-items: center;
+  gap: var(--kk-space-3);
+  margin-bottom: var(--kk-space-2);
+}
+
+.feed-dish-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--kk-text);
+}
+
+.feed-comment {
+  font-size: 13px;
+  color: var(--kk-text-secondary);
+  line-height: 1.5;
+  margin: var(--kk-space-2) 0;
+}
+
+.feed-restaurant-link {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--kk-orange);
+  padding: 0;
+  margin-top: var(--kk-space-1);
+}
+
+.feed-restaurant-link:hover {
+  text-decoration: underline;
+}
+
+.feed-activity-text {
+  font-size: 13px;
+  color: var(--kk-text);
+  margin: 0;
+}
+
+.feed-price {
+  color: var(--kk-text-muted);
+}
+
+.feed-collection {
+  font-size: 12px;
+  color: var(--kk-text-muted);
+  margin: var(--kk-space-1) 0 0;
+}
+
+.feed-item-count {
+  color: var(--kk-text-muted);
+  font-size: 12px;
+}
+
+.feed-list-desc {
+  font-size: 13px;
+  color: var(--kk-text-secondary);
+  margin: var(--kk-space-1) 0 0;
+}

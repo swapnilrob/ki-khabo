@@ -1,0 +1,126 @@
+/* ═══════════════════════════════════════════════════════════════
+   Admin Dashboard
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Stat grid ── */
+.kk-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--kk-space-4);
+  margin-bottom: var(--kk-space-7);
+}
+
+.kk-stat-card {
+  text-align: center;
+  padding: var(--kk-space-5);
+}
+
+.kk-stat-card__val {
+  display: block;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--kk-text);
+  line-height: 1.2;
+}
+
+.kk-stat-card__val--pending { color: var(--kk-orange); }
+.kk-stat-card__val--approved { color: var(--kk-green); }
+
+.kk-stat-card__label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--kk-text-muted);
+  margin-top: var(--kk-space-1);
+}
+
+/* ── Section title ── */
+.kk-section-title {
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: var(--kk-space-3);
+  margin-bottom: var(--kk-space-4);
+}
+
+/* ── Table ── */
+.kk-table-wrap {
+  background: var(--kk-white);
+  border: 1px solid var(--kk-border);
+  border-radius: var(--kk-radius);
+  overflow-x: auto;
+  box-shadow: var(--kk-shadow-sm);
+}
+
+.kk-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.kk-table th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--kk-text-muted);
+  padding: var(--kk-space-3) var(--kk-space-4);
+  border-bottom: 1px solid var(--kk-border);
+  background: var(--kk-bg);
+}
+
+.kk-table td {
+  padding: var(--kk-space-4);
+  border-bottom: 1px solid var(--kk-border-light);
+  vertical-align: middle;
+}
+
+.kk-table tr:last-child td {
+  border-bottom: none;
+}
+
+.kk-table__primary {
+  font-weight: 600;
+  color: var(--kk-text);
+}
+
+.kk-table__small {
+  font-size: 11.5px;
+  color: var(--kk-text-muted);
+}
+
+.kk-table__code {
+  font-family: var(--kk-font-mono);
+  font-size: 12px;
+  background: var(--kk-bg);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.kk-table__actions {
+  display: flex;
+  gap: var(--kk-space-2);
+}
+
+/* ── Empty state ── */
+.kk-empty {
+  text-align: center;
+  color: var(--kk-text-muted);
+  padding: var(--kk-space-8) var(--kk-space-5);
+  font-size: 14px;
+}
+
+/* ── Toast ── */
+.kk-toast {
+  background: var(--kk-green-light);
+  color: var(--kk-green);
+  font-size: 13px;
+  font-weight: 500;
+  padding: var(--kk-space-3) var(--kk-space-4);
+  border-radius: var(--kk-radius-sm);
+  margin-bottom: var(--kk-space-5);
+}
