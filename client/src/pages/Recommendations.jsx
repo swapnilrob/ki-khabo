@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { fetchRecommendations } from "../api/recommendations";
+import { logMeal } from "../api/nutrition";
 import StarRating from "../components/StarRating";
 import "../styles/menu.css";
 import "../styles/recommend.css";
@@ -8,11 +9,13 @@ import "../styles/recommend.css";
 const MEAL_TIMES = ["breakfast", "lunch", "dinner", "snacks"];
 
 export default function Recommendations() {
-  const [mealTime, setMealTime] = useState(""); // "" = let server decide by clock
+  const [mealTime, setMealTime] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [data, setData] = useState({ context: null, recommendations: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [loggedIds, setLoggedIds] = useState(new Set());
+  const [loggingId, setLoggingId] = useState(null);
 
   useEffect(() => {
     setLoading(true);
@@ -32,6 +35,18 @@ export default function Recommendations() {
 
     return () => clearTimeout(timer);
   }, [mealTime, maxPrice]);
+
+  const handleLog = async (dish) => {
+    setLoggingId(dish._id);
+    try {
+      await logMeal(dish._id, 1, dish.restaurant?._id);
+      setLoggedIds((prev) => new Set(prev).add(dish._id));
+    } catch {
+      setError("Could not log meal. Try again.");
+    } finally {
+      setLoggingId(null);
+    }
+  };
 
   const ctx = data.context;
 
@@ -73,36 +88,68 @@ export default function Recommendations() {
       ) : data.recommendations.length === 0 ? (
         <p>No recommendations yet. Try setting your dietary preferences, or check back after more restaurants are added.</p>
       ) : (
-        data.recommendations.map((r) => (
-          <div key={r._id} className="rec-card">
-            <div className="rec-card-main">
-              <div style={{ fontWeight: 700 }}>{r.name}</div>
-              <small style={{ color: "#666" }}>
-                {r.restaurant?.businessName}
-                {r.restaurant?.city ? ` · ${r.restaurant.city}` : ""} · {r.category}
-              </small>
-              <div style={{ marginTop: 4, display: "flex", alignItems: "center", gap: 8 }}>
-                <StarRating value={r.averageRating} size={14} />
-                <span className="rec-cal">{r.nutrition?.calories || 0} kcal</span>
-              </div>
-              {r.reasons?.length > 0 && (
-                <div className="rec-reasons">
-                  {r.reasons.map((reason) => (
-                    <span key={reason} className="reason-chip">{reason}</span>
-                  ))}
+        data.recommendations.map((r) => {
+          const isLogged = loggedIds.has(r._id);
+          const isLogging = loggingId === r._id;
+
+          return (
+            <div key={r._id} className="rec-card">
+              <div className="rec-card-main">
+                <div style={{ fontWeight: 700 }}>{r.name}</div>
+                <small style={{ color: "#666" }}>
+                  {r.restaurant?.businessName}
+                  {r.restaurant?.city ? ` · ${r.restaurant.city}` : ""} · {r.category}
+                </small>
+                <div style={{ marginTop: 4, display: "flex", alignItems: "center", gap: 8 }}>
+                  <StarRating value={r.averageRating} size={14} />
+                  <span className="rec-cal">{r.nutrition?.calories || 0} kcal</span>
                 </div>
-              )}
+                {r.reasons?.length > 0 && (
+                  <div className="rec-reasons">
+                    {r.reasons.map((reason) => (
+                      <span key={reason} className="reason-chip">{reason}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div className="rec-card-side">
+                <div className="rec-price">৳{r.price}</div>
+                {r.restaurant?._id && (
+                  <Link to={`/restaurant/${r.restaurant._id}`}>
+                    <button style={{ marginBottom: 6 }}>View</button>
+                  </Link>
+                )}
+                {isLogged ? (
+                  <span
+                    style={{
+                      display: "inline-block",
+                      padding: "6px 12px",
+                      borderRadius: 6,
+                      background: "#e9f6ec",
+                      color: "#1e7d34",
+                      fontSize: 13,
+                      fontWeight: 600,
+                    }}
+                  >
+                    ✅ Logged to Health Dashboard
+                  </span>
+                ) : (
+                  <button
+                    onClick={() => handleLog(r)}
+                    disabled={isLogging}
+                    style={{
+                      padding: "6px 12px",
+                      fontSize: 13,
+                      background: "#2563eb",
+                    }}
+                  >
+                    {isLogging ? "Logging…" : "📊 Log meal"}
+                  </button>
+                )}
+              </div>
             </div>
-            <div className="rec-card-side">
-              <div className="rec-price">৳{r.price}</div>
-              {r.restaurant?._id && (
-                <Link to={`/restaurant/${r.restaurant._id}`}>
-                  <button>View</button>
-                </Link>
-              )}
-            </div>
-          </div>
-        ))
+          );
+        })
       )}
     </div>
   );

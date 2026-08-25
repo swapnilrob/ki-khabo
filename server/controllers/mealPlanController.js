@@ -8,11 +8,21 @@ import Dish from "../models/Dish.js";
 // ─────────────────────────────────────────────────────────────
 
 const getDailyTotals = async (meals) => {
-  const dishIds = meals.map((m) => m.dish);
-  const dishes = await Dish.find({ _id: { $in: dishIds } });
+  // Get unique dish IDs, then fetch once
+  const uniqueIds = [...new Set(meals.map((m) => m.dish.toString()))];
+  const dishDocs = await Dish.find({ _id: { $in: uniqueIds } });
 
-  const totals = dishes.reduce(
-    (acc, dish) => {
+  // Build a lookup map: id -> dish document
+  const dishMap = {};
+  dishDocs.forEach((d) => {
+    dishMap[d._id.toString()] = d;
+  });
+
+  // Iterate over EVERY meal entry (including duplicates)
+  const totals = meals.reduce(
+    (acc, meal) => {
+      const dish = dishMap[meal.dish.toString()];
+      if (!dish) return acc;
       const n = dish.nutrition;
       acc.calories += n.calories;
       acc.protein += n.protein;
@@ -70,12 +80,17 @@ export const getMealPlanById = asyncHandler(async (req, res) => {
     throw new Error("Meal plan not found");
   }
 
+  const planObj = plan.toObject();
   const planWithTotals = {
-    ...plan.toObject(),
+    ...planObj,
     days: await Promise.all(
-      plan.days.map(async (day) => ({
-        ...day.toObject(),
+      planObj.days.map(async (day) => ({
+        ...day,
         totals: await getDailyTotals(day.meals),
+        effectiveCalorieTarget:
+          day.calorieTarget > 0 ? day.calorieTarget : plan.dailyCalorieTarget,
+        effectiveBudget:
+          day.budgetTarget > 0 ? day.budgetTarget : plan.budgetPerDay,
       }))
     ),
   };

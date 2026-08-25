@@ -26,6 +26,9 @@ const dayPlanSchema = new mongoose.Schema(
       ],
       required: true,
     },
+    // Per-day override — 0 means "use the plan's dailyCalorieTarget"
+    calorieTarget: { type: Number, default: 0, min: 0, max: 10000 },
+    budgetTarget: { type: Number, default: 0, min: 0 },
     meals: [mealEntrySchema],
   },
   { _id: false }
