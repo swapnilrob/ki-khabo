@@ -25,6 +25,7 @@ import Discover from "./pages/Discover";
 
 import MealPlanner from "./pages/MealPlanner";
 import Recommendations from "./pages/Recommendations";
+import OwnerAnalytics from "./pages/OwnerAnalytics";
 
 // Sends each role to the right dashboard after login
 function DashboardRedirect() {
@@ -131,6 +132,15 @@ export default function App() {
         element={
           <ProtectedRoute allow={["owner"]}>
             <OwnerReviews />
+          </ProtectedRoute>
+        }
+      />
+      {/* M3-3 — Swapnil */}
+      <Route
+        path="/owner/analytics"
+        element={
+          <ProtectedRoute allow={["owner"]}>
+            <OwnerAnalytics />
           </ProtectedRoute>
         }
       />
