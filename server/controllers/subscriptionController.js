@@ -2,6 +2,7 @@ import asyncHandler from "express-async-handler";
 import User from "../models/User.js";
 import Subscription from "../models/Subscription.js";
 import Settings from "../models/Settings.js";
+import { awardPoints } from "./rewardController.js"; 
 
 // Generate a fake transaction ID (simulating bKash/SSLCommerz)
 const generateTransactionId = (method) => {
@@ -122,6 +123,14 @@ export const subscribe = asyncHandler(async (req, res) => {
   user.premiumExpiry = endDate;
   user.subscriptionPlan = plan;
   await user.save();
+
+// M3-7: Award points for subscribing 
+  await awardPoints(
+    req.user._id,
+    "subscription_purchased",
+    `${plan} premium subscription activated`,
+    subscription._id
+  ); 
 
   res.status(201).json({
     success: true,

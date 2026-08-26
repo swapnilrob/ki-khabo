@@ -27,6 +27,7 @@ import MealPlanner from "./pages/MealPlanner";
 import Recommendations from "./pages/Recommendations";
 import OwnerAnalytics from "./pages/OwnerAnalytics";
 import Subscription from "./pages/Subscription"; 
+import Rewards from "./pages/Rewards"; 
 
 // Sends each role to the right dashboard after login
 function DashboardRedirect() {
@@ -120,6 +121,15 @@ export default function App() {
         element={
           <ProtectedRoute allow={["user"]}>
             <Subscription />
+          </ProtectedRoute>
+        }
+      /> 
+            {/* M3-7 — Shakib */}
+      <Route
+        path="/app/rewards"
+        element={
+          <ProtectedRoute allow={["user"]}>
+            <Rewards />
           </ProtectedRoute>
         }
       /> 

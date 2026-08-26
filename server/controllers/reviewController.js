@@ -78,7 +78,13 @@ export const createReview = asyncHandler(async (req, res) => {
   if (targetType === "restaurant") {
     await Review.syncRestaurantRating(restaurant);
   }
-
+  // M3-7: Award points for writing a review (premium users only)
+  await awardPoints(
+    req.user._id,
+    "review_written",
+    `Reviewed ${targetType === "dish" ? "a dish" : "a restaurant"}`,
+    review._id
+  ); 
   res.status(201).json({ success: true, review: publicReview(review) });
 });
 
