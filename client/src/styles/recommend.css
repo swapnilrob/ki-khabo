@@ -1,56 +1,124 @@
+/* ═══════════════════════════════════════════════════════════════
+   Recommendations — Ki Khabo Design System
+   ═══════════════════════════════════════════════════════════════ */
+
 .rec-context {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  gap: 8px;
-  background: #eef6ff;
-  border: 1px solid #d5e6fb;
-  border-radius: 10px;
-  padding: 10px 14px;
+  gap: var(--kk-space-2);
+  background: var(--kk-orange-pale);
+  border: 1px solid var(--kk-orange-light);
+  border-radius: var(--kk-radius);
+  padding: var(--kk-space-3) var(--kk-space-4);
   font-size: 14px;
-  color: #1a56db;
-  margin: 8px 0 16px;
+  color: var(--kk-orange-hover);
+  margin: var(--kk-space-2) 0 var(--kk-space-5);
 }
-.rec-context small { color: #6b7a90; }
+.rec-context strong {
+  color: var(--kk-orange);
+}
+.rec-context small {
+  color: var(--kk-text-muted);
+}
 
-.rec-controls { display: flex; gap: 8px; margin-bottom: 16px; }
+.rec-controls {
+  display: flex;
+  gap: var(--kk-space-2);
+  margin-bottom: var(--kk-space-5);
+}
 .rec-controls select,
 .rec-controls input {
-  padding: 8px 10px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  padding: var(--kk-space-2) var(--kk-space-3);
+  border: 1px solid var(--kk-border);
+  border-radius: var(--kk-radius-sm);
   font-size: 13px;
+  font-family: var(--kk-font-body);
+  background: var(--kk-bg);
+  color: var(--kk-text);
+}
+.rec-controls select:focus,
+.rec-controls input:focus {
+  outline: none;
+  border-color: var(--kk-orange);
+  box-shadow: 0 0 0 3px var(--kk-orange-light);
+  background: var(--kk-white);
 }
 
 .rec-card {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
-  background: #fff;
-  border: 1px solid #eee;
-  border-radius: 12px;
-  padding: 12px 16px;
-  margin-bottom: 10px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  gap: var(--kk-space-4);
+  background: var(--kk-white);
+  border: 1px solid var(--kk-border);
+  border-radius: var(--kk-radius);
+  padding: var(--kk-space-4) var(--kk-space-5);
+  margin-bottom: var(--kk-space-3);
+  box-shadow: var(--kk-shadow-sm);
+  transition: box-shadow 0.15s;
 }
+.rec-card:hover {
+  box-shadow: var(--kk-shadow-md);
+}
+
+.rec-card-main {
+  flex: 1;
+}
+.rec-card-main > div:first-child {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--kk-text);
+}
+.rec-card-main > small {
+  color: var(--kk-text-muted);
+  font-size: 13px;
+}
+
 .rec-card-side {
   text-align: right;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 6px;
+  gap: var(--kk-space-2);
+  flex-shrink: 0;
 }
-.rec-price { font-weight: 700; color: #222; }
-.rec-cal { font-size: 12px; color: #666; }
 
-.rec-reasons { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px; }
+.rec-price {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--kk-orange);
+}
+
+.rec-cal {
+  font-size: 12px;
+  color: var(--kk-text-muted);
+  font-family: var(--kk-font-mono);
+}
+
+.rec-reasons {
+  margin-top: var(--kk-space-2);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--kk-space-1);
+}
 .reason-chip {
-  background: #f0f7f0;
-  color: #2e7d32;
-  border: 1px solid #d6ead6;
+  background: var(--kk-green-light);
+  color: var(--kk-green);
+  border: 1px solid #c8e6c9;
   font-size: 11px;
   font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 999px;
+  padding: 2px 10px;
+  border-radius: var(--kk-radius-pill);
+  font-family: var(--kk-font-body);
+}
+
+.rec-logged-badge {
+  display: inline-block;
+  padding: var(--kk-space-2) var(--kk-space-3);
+  border-radius: var(--kk-radius-sm);
+  background: var(--kk-green-light);
+  color: var(--kk-green);
+  font-size: 12px;
+  font-weight: 600;
 }

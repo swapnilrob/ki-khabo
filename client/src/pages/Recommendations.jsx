@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { fetchRecommendations } from "../api/recommendations";
 import { logMeal } from "../api/nutrition";
 import StarRating from "../components/StarRating";
-import "../styles/menu.css";
+import AppLayout from "../components/AppLayout";
 import "../styles/recommend.css";
 
 const MEAL_TIMES = ["breakfast", "lunch", "dinner", "snacks"];
@@ -25,14 +25,10 @@ export default function Recommendations() {
       if (maxPrice) params.maxPrice = maxPrice;
 
       fetchRecommendations(params)
-        .then((res) => {
-          setData({ context: res.context, recommendations: res.recommendations || [] });
-          setError("");
-        })
+        .then((res) => { setData({ context: res.context, recommendations: res.recommendations || [] }); setError(""); })
         .catch(() => setError("Couldn't load recommendations. Are you logged in?"))
         .finally(() => setLoading(false));
     }, 350);
-
     return () => clearTimeout(timer);
   }, [mealTime, maxPrice]);
 
@@ -51,9 +47,9 @@ export default function Recommendations() {
   const ctx = data.context;
 
   return (
-    <div className="profile-wrap">
-      <Link to="/app">← Dashboard</Link>
-      <h1 style={{ margin: "12px 0 6px" }}>Recommended for you</h1>
+    <AppLayout>
+      <h2 className="kk-page-title">Recommended for You</h2>
+      <p className="kk-page-subtitle">Dishes picked based on your preferences, calorie goals, and time of day.</p>
 
       {ctx && (
         <div className="rec-context">
@@ -82,11 +78,13 @@ export default function Recommendations() {
       </div>
 
       {loading ? (
-        <p style={{ color: "#666" }}>Finding the best picks…</p>
+        <p style={{ color: "var(--kk-text-muted)", marginTop: "var(--kk-space-3)" }}>Finding the best picks…</p>
       ) : error ? (
-        <p style={{ color: "#c0392b" }}>{error}</p>
+        <div style={{ background: "var(--kk-red-light)", color: "var(--kk-red)", padding: "10px 16px", borderRadius: "var(--kk-radius-sm)", fontSize: 13 }}>{error}</div>
       ) : data.recommendations.length === 0 ? (
-        <p>No recommendations yet. Try setting your dietary preferences, or check back after more restaurants are added.</p>
+        <div style={{ textAlign: "center", padding: "var(--kk-space-8) var(--kk-space-5)", color: "var(--kk-text-muted)" }}>
+          No recommendations yet. Try setting your dietary preferences, or check back after more restaurants are added.
+        </div>
       ) : (
         data.recommendations.map((r) => {
           const isLogged = loggedIds.has(r._id);
@@ -95,10 +93,10 @@ export default function Recommendations() {
           return (
             <div key={r._id} className="rec-card">
               <div className="rec-card-main">
-                <div style={{ fontWeight: 700 }}>{r.name}</div>
-                <small style={{ color: "#666" }}>
+                <div>{r.name}</div>
+                <small>
                   {r.restaurant?.businessName}
-                  {r.restaurant?.city ? ` · ${r.restaurant.city}` : ""} · {r.category}
+                  {r.restaurant?.city ? (" · " + r.restaurant.city) : ""} · {r.category}
                 </small>
                 <div style={{ marginTop: 4, display: "flex", alignItems: "center", gap: 8 }}>
                   <StarRating value={r.averageRating} size={14} />
@@ -113,35 +111,19 @@ export default function Recommendations() {
                 )}
               </div>
               <div className="rec-card-side">
-                <div className="rec-price">৳{r.price}</div>
+                <div className="rec-price">{"৳" + r.price}</div>
                 {r.restaurant?._id && (
-                  <Link to={`/restaurant/${r.restaurant._id}`}>
-                    <button style={{ marginBottom: 6 }}>View</button>
+                  <Link to={"/restaurant/" + r.restaurant._id}>
+                    <button className="kk-btn kk-btn--secondary kk-btn--sm">View</button>
                   </Link>
                 )}
                 {isLogged ? (
-                  <span
-                    style={{
-                      display: "inline-block",
-                      padding: "6px 12px",
-                      borderRadius: 6,
-                      background: "#e9f6ec",
-                      color: "#1e7d34",
-                      fontSize: 13,
-                      fontWeight: 600,
-                    }}
-                  >
-                    ✅ Logged to Health Dashboard
-                  </span>
+                  <span className="rec-logged-badge">✅ Logged</span>
                 ) : (
                   <button
+                    className="kk-btn kk-btn--outline kk-btn--sm"
                     onClick={() => handleLog(r)}
                     disabled={isLogging}
-                    style={{
-                      padding: "6px 12px",
-                      fontSize: 13,
-                      background: "#2563eb",
-                    }}
                   >
                     {isLogging ? "Logging…" : "📊 Log meal"}
                   </button>
@@ -151,6 +133,6 @@ export default function Recommendations() {
           );
         })
       )}
-    </div>
+    </AppLayout>
   );
 }
