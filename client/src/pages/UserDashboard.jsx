@@ -21,7 +21,9 @@ const SOCIAL = [
 const SETTINGS = [
   { to: "/app/preferences",    icon: "👤", label: "Edit Profile",          desc: "Name, location, password" },
   { to: "/app/preferences",    icon: "🥗", label: "Dietary Preferences",  desc: "Allergies and diet settings" },
-];
+  { to: "/app/subscription",   icon: "⭐", label: "Premium & Subscription", desc: "Upgrade to unlock AI features" },
+]; 
+
 
 export default function UserDashboard() {
   const { user } = useAuth();
