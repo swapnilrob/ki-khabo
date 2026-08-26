@@ -4,14 +4,23 @@ import AppLayout from "../components/AppLayout";
 import { Card, Badge } from "../components/ui";
 import "./UserDashboard.css";
 
-const FEATURES = [
-  { to: "/app/preferences",    icon: "⚙️", label: "Profile & Preferences", desc: "Edit profile and dietary settings" },
-  { to: "/discover",           icon: "🔍", label: "Discover & Search",  desc: "Find restaurants nearby" },
-  { to: "/app/health",         icon: "📊", label: "Health Dashboard",    desc: "Track your daily nutrition" },
-  { to: "/feed",               icon: "👥", label: "Community Feed",      desc: "Follow friends, see reviews" },
-  { to: "/app/meal-planner",   icon: "📋", label: "Meal Planner",        desc: "Plan your weekly meals" },
-  { to: "/saved-dishes",       icon: "❤️", label: "Saved Dishes",        desc: "Your favorite dishes" },
-  { to: "/food-lists",         icon: "📝", label: "Food Lists",          desc: "Curated food guides" },
+const MAIN_FEATURES = [
+  { to: "/discover",           icon: "🔍", label: "Discover & Search",     desc: "Find restaurants nearby" },
+  { to: "/app/recommendations", icon: "🎯", label: "Recommendations",      desc: "Dishes picked for you" },
+  { to: "/app/health",         icon: "📊", label: "Health Dashboard",      desc: "Track your daily nutrition" },
+  { to: "/app/meal-planner",   icon: "📋", label: "Meal Planner",          desc: "Plan your weekly meals" },
+  { to: "/restaurants",        icon: "🍽️", label: "Browse Restaurants",    desc: "View menus and reviews" },
+];
+
+const SOCIAL = [
+  { to: "/feed",               icon: "👥", label: "Community Feed",        desc: "Follow friends, see reviews" },
+  { to: "/saved-dishes",       icon: "❤️", label: "Saved Dishes",          desc: "Your favorite dishes" },
+  { to: "/food-lists",         icon: "📝", label: "Food Lists",            desc: "Curated food guides" },
+];
+
+const SETTINGS = [
+  { to: "/app/preferences",    icon: "👤", label: "Edit Profile",          desc: "Name, location, password" },
+  { to: "/app/preferences",    icon: "🥗", label: "Dietary Preferences",  desc: "Allergies and diet settings" },
 ];
 
 export default function UserDashboard() {
@@ -26,8 +35,7 @@ export default function UserDashboard() {
       <p className="kk-user-sidebar__email">{user?.email}</p>
 
       <div className="kk-user-sidebar__badges">
-        {user?.isPremium && <Badge variant="info">Premium</Badge>}
-        {!user?.isPremium && <Badge variant="neutral">Free plan</Badge>}
+        {user?.isPremium ? <Badge variant="info">Premium</Badge> : <Badge variant="neutral">Free plan</Badge>}
       </div>
 
       {user?.rewardPoints > 0 && (
@@ -41,9 +49,7 @@ export default function UserDashboard() {
         <div className="kk-user-sidebar__section">
           <h4>Dietary preferences</h4>
           <div className="kk-user-sidebar__tags">
-            {user.dietaryPreferences.map((p) => (
-              <Badge key={p}>{p}</Badge>
-            ))}
+            {user.dietaryPreferences.map((p) => <Badge key={p}>{p}</Badge>)}
           </div>
         </div>
       )}
@@ -52,9 +58,7 @@ export default function UserDashboard() {
         <div className="kk-user-sidebar__section">
           <h4>Allergies</h4>
           <div className="kk-user-sidebar__tags">
-            {user.allergies.map((a) => (
-              <Badge key={a} variant="spicy">{a}</Badge>
-            ))}
+            {user.allergies.map((a) => <Badge key={a} variant="spicy">{a}</Badge>)}
           </div>
         </div>
       )}
@@ -69,8 +73,34 @@ export default function UserDashboard() {
       </p>
 
       <div className="kk-feature-grid">
-        {FEATURES.map((f) => (
-          <Link key={f.to} to={f.to} className="kk-feature-link">
+        {MAIN_FEATURES.map((f) => (
+          <Link key={f.to + f.label} to={f.to} className="kk-feature-link">
+            <Card hover className="kk-feature-card">
+              <span className="kk-feature-card__icon">{f.icon}</span>
+              <h3 className="kk-feature-card__label">{f.label}</h3>
+              <p className="kk-feature-card__desc">{f.desc}</p>
+            </Card>
+          </Link>
+        ))}
+      </div>
+
+      <h3 className="kk-section-heading">Social</h3>
+      <div className="kk-feature-grid">
+        {SOCIAL.map((f) => (
+          <Link key={f.to + f.label} to={f.to} className="kk-feature-link">
+            <Card hover className="kk-feature-card">
+              <span className="kk-feature-card__icon">{f.icon}</span>
+              <h3 className="kk-feature-card__label">{f.label}</h3>
+              <p className="kk-feature-card__desc">{f.desc}</p>
+            </Card>
+          </Link>
+        ))}
+      </div>
+
+      <h3 className="kk-section-heading">Settings</h3>
+      <div className="kk-feature-grid">
+        {SETTINGS.map((f) => (
+          <Link key={f.label} to={f.to} className="kk-feature-link">
             <Card hover className="kk-feature-card">
               <span className="kk-feature-card__icon">{f.icon}</span>
               <h3 className="kk-feature-card__label">{f.label}</h3>
