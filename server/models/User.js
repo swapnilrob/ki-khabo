@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from "mongoose"; 
 import bcrypt from "bcryptjs";
 import { DIETARY_PREFERENCES, ALLERGENS } from "../constants/dietaryOptions.js";
 const userSchema = new mongoose.Schema(
@@ -43,12 +43,14 @@ const userSchema = new mongoose.Schema(
 
     // Shakib (M3-6, M3-7) fills these later
     isPremium: { type: Boolean, default: false },
+    premiumExpiry: { type: Date, default: null },
+    subscriptionPlan: { type: String, enum: ["monthly", "yearly", null], default: null },
     rewardPoints: { type: Number, default: 0 },
 
     isActive: { type: Boolean, default: true },
   },
   { timestamps: true }
-);
+);  
 
 userSchema.pre("save", async function () {
   if (!this.isModified("password")) return;

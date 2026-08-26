@@ -50,18 +50,19 @@ export const createReview = asyncHandler(async (req, res) => {
   }
 
   // 3. Friendly duplicate check (the DB index is the real guarantee)
-  const dupeFilter =
-    targetType === "dish"
-      ? { user: req.user._id, dish, targetType: "dish" }
-      : { user: req.user._id, restaurant, targetType: "restaurant" };
-  if (await Review.findOne(dupeFilter)) {
-    res.status(409);
-    throw new Error(
-      targetType === "dish"
-        ? "You've already reviewed this dish. Edit your existing review instead."
-        : "You've already reviewed this restaurant's ambience. Edit it instead."
-    );
-  }
+  // const dupeFilter =
+  //   targetType === "dish"
+  //     ? { user: req.user._id, dish, targetType: "dish" }
+  //     : { user: req.user._id, restaurant, targetType: "restaurant" };
+  // if (await Review.findOne(dupeFilter)) {
+  //   res.status(409);
+  //   throw new Error(
+  //     targetType === "dish"
+  //       ? "You've already reviewed this dish. Edit your existing review instead."
+  //       : "You've already reviewed this restaurant's ambience. Edit it instead."
+  //   );
+  // }
+  
 
   // 4. Create
   const review = await Review.create({
