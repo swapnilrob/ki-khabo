@@ -9,7 +9,7 @@ const MAIN_FEATURES = [
   { to: "/app/recommendations", icon: "🎯", label: "Recommendations",      desc: "Dishes picked for you" },
   { to: "/app/health",         icon: "📊", label: "Health Dashboard",      desc: "Track your daily nutrition" },
   { to: "/app/meal-planner",   icon: "📋", label: "Meal Planner",          desc: "Plan your weekly meals" },
-  //{ to: "/restaurants",        icon: "🍽️", label: "Browse Restaurants",    desc: "View menus and reviews" },//
+  { to: "/app/orders",         icon: "🛒", label: "My Orders",             desc: "Track orders & reservations" },
 ];
 
 const SOCIAL = [

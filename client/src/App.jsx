@@ -25,6 +25,8 @@ import Discover from "./pages/Discover";
 
 import MealPlanner from "./pages/MealPlanner";
 import Recommendations from "./pages/Recommendations";
+import MyOrders from "./pages/MyOrders";
+import OwnerOrders from "./pages/OwnerOrders";
 import OwnerAnalytics from "./pages/OwnerAnalytics";
 import Subscription from "./pages/Subscription"; 
 import Rewards from "./pages/Rewards"; 
@@ -133,6 +135,23 @@ export default function App() {
           </ProtectedRoute>
         }
       /> 
+            {/* M3-4 — Noman */}
+      <Route
+        path="/app/orders"
+        element={
+          <ProtectedRoute allow={["user"]}>
+            <MyOrders />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/owner/orders"
+        element={
+          <ProtectedRoute allow={["owner"]}>
+            <OwnerOrders />
+          </ProtectedRoute>
+        }
+      />
       {/* M1-1 — Noman */}
       <Route path="/discover" element={<Discover />} />
 
