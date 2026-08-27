@@ -23,6 +23,8 @@ import analyticsRoutes from "./routes/analyticsRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import subscriptionRoutes from "./routes/subscriptionRoutes.js"; 
 import rewardRoutes from "./routes/rewardRoutes.js"; 
+import aiAssistantRoutes from "./routes/aiAssistantRoutes.js";
+import aiVisionRoutes from "./routes/aiVisionRoutes.js";
 
 dotenv.config();
 connectDB();
@@ -56,6 +58,8 @@ app.use("/api/meal-planner", mealPlannerRoutes); // Swapnil
 app.use("/api/analytics", analyticsRoutes);      // Swapnil (M3-3)
 app.use("/api/subscription", subscriptionRoutes); // Shakib (M3-6)
 app.use("/api/rewards", rewardRoutes);             // Shakib (M3-7)  
+app.use("/api/ai-assistant", aiAssistantRoutes);   // Mostahid (M3-1)
+app.use("/api/ai-vision", aiVisionRoutes);         // Mostahid (M3-2)
 // ───────────────────────────────────────────────────────────────────
 
 app.use(notFound);

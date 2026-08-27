@@ -5,6 +5,7 @@ import {
   deleteMealLog,
   getDailySummary,
   getWeeklySummary,
+  getMonthSummary,
   getGoal,
   updateGoal,
 } from "../controllers/nutritionController.js";
@@ -24,5 +25,6 @@ router.delete("/log/:id", deleteMealLog);
 
 router.get("/summary/daily", getDailySummary);
 router.get("/summary/weekly", getWeeklySummary);
+router.get("/summary/month", getMonthSummary);
 
 export default router;

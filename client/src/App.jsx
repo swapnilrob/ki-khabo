@@ -30,6 +30,8 @@ import OwnerOrders from "./pages/OwnerOrders";
 import OwnerAnalytics from "./pages/OwnerAnalytics";
 import Subscription from "./pages/Subscription"; 
 import Rewards from "./pages/Rewards"; 
+import AiAssistant from "./pages/AiAssistant";
+import AiVision from "./pages/AiVision";
 
 // Sends each role to the right dashboard after login
 function DashboardRedirect() {
@@ -90,6 +92,26 @@ export default function App() {
         element={
           <ProtectedRoute allow={["user"]}>
             <HealthDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* M3-1 — Mostahid */}
+      <Route
+        path="/app/ai-assistant"
+        element={
+          <ProtectedRoute allow={["user"]}>
+            <AiAssistant />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* M3-2 — Mostahid */}
+      <Route
+        path="/app/ai-vision"
+        element={
+          <ProtectedRoute allow={["user"]}>
+            <AiVision />
           </ProtectedRoute>
         }
       />

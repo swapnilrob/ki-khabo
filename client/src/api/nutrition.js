@@ -21,3 +21,6 @@ export const fetchDailySummary = (date) =>
 
 export const fetchWeeklySummary = (end) =>
   api.get("/nutrition/summary/weekly", { params: end ? { end } : {} }).then((r) => r.data);
+
+export const fetchMonthSummary = (month) =>
+  api.get("/nutrition/summary/month", { params: month ? { month } : {} }).then((r) => r.data);

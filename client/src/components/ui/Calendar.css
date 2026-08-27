@@ -1,0 +1,114 @@
+.kk-calendar {
+  background: var(--kk-white);
+  border: 1px solid var(--kk-border);
+  border-radius: var(--kk-radius);
+  padding: var(--kk-space-4);
+}
+
+.kk-calendar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--kk-space-3);
+}
+
+.kk-calendar__label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--kk-text);
+}
+
+.kk-calendar__nav {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--kk-radius-pill);
+  border: 1px solid var(--kk-border);
+  background: var(--kk-bg);
+  color: var(--kk-text-secondary);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.kk-calendar__nav:hover:not(:disabled) {
+  background: var(--kk-orange-light);
+  color: var(--kk-orange);
+}
+.kk-calendar__nav:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.kk-calendar__weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: var(--kk-space-2);
+}
+.kk-calendar__weekdays span {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--kk-text-muted);
+  text-transform: uppercase;
+  font-family: var(--kk-font-mono);
+}
+
+.kk-calendar__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.kk-calendar__cell {
+  position: relative;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  border-radius: var(--kk-radius-sm);
+  font-size: 13px;
+  color: var(--kk-text);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.kk-calendar__cell--empty {
+  cursor: default;
+}
+.kk-calendar__cell:hover:not(:disabled):not(.kk-calendar__cell--empty) {
+  background: var(--kk-orange-pale);
+}
+
+.kk-calendar__cell--today .kk-calendar__day-num {
+  font-weight: 700;
+  color: var(--kk-orange);
+}
+
+.kk-calendar__cell--selected {
+  background: var(--kk-orange);
+}
+.kk-calendar__cell--selected .kk-calendar__day-num {
+  color: #fff;
+  font-weight: 700;
+}
+
+.kk-calendar__cell--disabled {
+  color: var(--kk-text-muted);
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.kk-calendar__dot {
+  position: absolute;
+  bottom: 4px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--kk-green);
+}
+.kk-calendar__cell--selected .kk-calendar__dot {
+  background: #fff;
+}

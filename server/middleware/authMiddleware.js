@@ -59,3 +59,17 @@ export const authorize =
     }
     next();
   };
+
+// M3-1 / M3-2 (Mostahid) — gates the AI Nutrition Assistant and AI Food
+// Image Recognition, both Premium-only per the feature spec. Must run after
+// `protect`. An expired premiumExpiry counts as not-premium even if the
+// isPremium flag hasn't been flipped back by a cleanup job yet.
+export const requirePremium = (req, res, next) => {
+  const user = req.user;
+  const active = user?.isPremium && (!user.premiumExpiry || user.premiumExpiry > new Date());
+  if (!active) {
+    res.status(403);
+    return next(new Error("This feature requires an active Premium subscription"));
+  }
+  next();
+};
