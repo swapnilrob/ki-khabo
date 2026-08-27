@@ -20,6 +20,7 @@ import nutritionRoutes from "./routes/nutritionRoutes.js";
 
 import recommendationRoutes from "./routes/recommendationRoutes.js";
 import analyticsRoutes from "./routes/analyticsRoutes.js";
+import orderRoutes from "./routes/orderRoutes.js";
 import subscriptionRoutes from "./routes/subscriptionRoutes.js"; 
 import rewardRoutes from "./routes/rewardRoutes.js"; 
 
@@ -50,7 +51,7 @@ app.use("/api/follows", followRoutes);           // Shakib (M2-4)
 app.use("/api/saved-dishes", savedDishRoutes);   // Shakib (M2-4)
 app.use("/api/food-lists", foodListRoutes);      // Shakib (M2-4)
 app.use("/api/feed", feedRoutes);                 // Shakib (M2-4) 
-// app.use("/api/orders", orderRoutes);             // Noman
+app.use("/api/orders", orderRoutes);               // Noman (M3-4)
 app.use("/api/meal-planner", mealPlannerRoutes); // Swapnil
 app.use("/api/analytics", analyticsRoutes);      // Swapnil (M3-3)
 app.use("/api/subscription", subscriptionRoutes); // Shakib (M3-6)

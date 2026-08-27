@@ -7,6 +7,7 @@ import ReviewList from "../components/ReviewList";
 import ReviewForm from "../components/ReviewForm";
 import { fetchRestaurantReviews } from "../api/reviews";
 import { useAuth } from "../context/AuthContext";
+import OrderBookingForm from "../components/OrderBookingForm";
 import "../styles/menu.css";
 
 export default function RestaurantProfile() {
@@ -126,6 +127,18 @@ export default function RestaurantProfile() {
           ))}
         </section>
       ))}
+
+      {/* ── Order / Book (M3-4 — Noman) ── */}
+      {user && user.role === "user" && (
+        <OrderBookingForm
+          restaurantId={id}
+          dishes={Object.values(menuByCategory).flat().map((d) => ({
+            _id: d.id,
+            name: d.name,
+            price: d.price,
+          }))}
+        />
+      )}
 
       {/* ── Restaurant Reviews ── */}
       <hr style={{ margin: "32px 0 24px", border: "none", borderTop: "1px solid #eee" }} />

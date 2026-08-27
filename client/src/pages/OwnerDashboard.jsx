@@ -59,6 +59,13 @@ export default function OwnerDashboard() {
               <p>Add, edit, or remove dishes and nutritional info.</p>
             </Card>
           </Link>
+          <Link to="/owner/orders" style={{ textDecoration: "none", color: "inherit" }}>
+            <Card hover className="kk-owner-card">
+              <span className="kk-owner-card__icon">&#128230;</span>
+              <h3>Orders & Bookings</h3>
+              <p>Approve, reject, or reschedule incoming requests.</p>
+            </Card>
+          </Link>
           <Link to="/owner/analytics" style={{ textDecoration: "none", color: "inherit" }}>
             <Card hover className="kk-owner-card">
               <span className="kk-owner-card__icon">&#128200;</span>
