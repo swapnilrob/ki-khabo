@@ -32,8 +32,12 @@ connectDB();
 const app = express();
 
 app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// M3-2 (Mostahid) — default 100kb is nowhere near enough for a
+// base64-encoded meal photo (base64 also inflates the raw file size by
+// ~33%). 8mb comfortably covers the 5MB image cap enforced in
+// aiVisionController.js plus that encoding overhead.
+app.use(express.json({ limit: "8mb" }));
+app.use(express.urlencoded({ extended: true, limit: "8mb" }));
 
 app.get("/api/health", (req, res) =>
   res.json({ status: "ok", service: "Ki Khabo API" })
