@@ -185,6 +185,40 @@ export const getWeeklySummary = asyncHandler(async (req, res) => {
   res.json({ success: true, goal: user.dailyCalorieGoal, days });
 });
 
+// @desc   Which dates in a month have logged meals, for the calendar view
+// @route  GET /api/nutrition/summary/month?month=YYYY-MM
+// @access Private/User
+export const getMonthSummary = asyncHandler(async (req, res) => {
+  const monthStr = req.query.month;
+  const now = new Date();
+  const [y, m] =
+    monthStr && /^\d{4}-\d{2}$/.test(monthStr)
+      ? monthStr.split("-").map(Number)
+      : [now.getUTCFullYear(), now.getUTCMonth() + 1];
+
+  const start = new Date(Date.UTC(y, m - 1, 1));
+  const end = new Date(Date.UTC(y, m, 1)); // first day of next month
+
+  const logs = await MealLog.find({
+    user: req.user._id,
+    loggedAt: { $gte: start, $lt: end },
+  }).select("loggedAt nutrition.calories");
+
+  const byDate = {};
+  logs.forEach((log) => {
+    const key = log.loggedAt.toISOString().slice(0, 10);
+    if (!byDate[key]) byDate[key] = { date: key, calories: 0, mealCount: 0 };
+    byDate[key].calories += log.nutrition?.calories || 0;
+    byDate[key].mealCount += 1;
+  });
+
+  res.json({
+    success: true,
+    month: `${y}-${String(m).padStart(2, "0")}`,
+    days: Object.values(byDate).sort((a, b) => a.date.localeCompare(b.date)),
+  });
+});
+
 // ─────────────────────────────────────────────────────────────
 // GOAL
 // ─────────────────────────────────────────────────────────────

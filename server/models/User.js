@@ -41,6 +41,26 @@ const userSchema = new mongoose.Schema(
     // M2-1 (Mostahid) — user-defined daily calorie target for the Health Dashboard
     dailyCalorieGoal: { type: Number, default: 2000, min: 800, max: 8000 },
 
+    // M3-1 (Mostahid) — inputs for the AI Nutrition Assistant's BMR/TDEE
+    // calorie calculation. All optional; the assistant asks for whichever
+    // are missing before giving a personalized target.
+    healthProfile: {
+      heightCm: { type: Number, min: 100, max: 250 },
+      weightKg: { type: Number, min: 30, max: 300 },
+      age: { type: Number, min: 13, max: 100 },
+      sex: { type: String, enum: ["male", "female", null], default: null },
+      activityLevel: {
+        type: String,
+        enum: ["sedentary", "light", "moderate", "active", "very_active"],
+        default: "moderate",
+      },
+      goal: {
+        type: String,
+        enum: ["weight_loss", "maintenance", "muscle_gain"],
+        default: "maintenance",
+      },
+    },
+
     // Shakib (M3-6, M3-7) fills these later
     isPremium: { type: Boolean, default: false },
     premiumExpiry: { type: Date, default: null },

@@ -5,3 +5,4 @@ export { default as CategoryTabs } from "./CategoryTabs";
 export { default as DishCard } from "./DishCard";
 export { default as SidebarCard } from "./SidebarCard";
 export { SidebarItem } from "./SidebarCard";
+export { default as Calendar } from "./Calendar";

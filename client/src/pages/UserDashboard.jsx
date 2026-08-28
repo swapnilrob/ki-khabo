@@ -10,6 +10,9 @@ const MAIN_FEATURES = [
   { to: "/app/health",         icon: "📊", label: "Health Dashboard",      desc: "Track your daily nutrition" },
   { to: "/app/meal-planner",   icon: "📋", label: "Meal Planner",          desc: "Plan your weekly meals" },
   { to: "/app/orders",         icon: "🛒", label: "My Orders",             desc: "Track orders & reservations" },
+  { to: "/app/ai-assistant",   icon: "🤖", label: "AI Nutrition Assistant", desc: "24/7 AI diet coach", premium: true },
+  { to: "/app/ai-vision",      icon: "📸", label: "AI Food Recognition",   desc: "Snap a photo, skip the typing", premium: true },
+  //{ to: "/restaurants",        icon: "🍽️", label: "Browse Restaurants",    desc: "View menus and reviews" },//
 ];
 
 const SOCIAL = [
@@ -79,7 +82,12 @@ export default function UserDashboard() {
       <div className="kk-feature-grid">
         {MAIN_FEATURES.map((f) => (
           <Link key={f.to + f.label} to={f.to} className="kk-feature-link">
-            <Card hover className="kk-feature-card">
+            <Card hover className="kk-feature-card" style={f.premium ? { position: "relative" } : undefined}>
+              {f.premium && (
+                <span style={{ position: "absolute", top: 10, right: 10 }}>
+                  <Badge variant="info">Premium</Badge>
+                </span>
+              )}
               <span className="kk-feature-card__icon">{f.icon}</span>
               <h3 className="kk-feature-card__label">{f.label}</h3>
               <p className="kk-feature-card__desc">{f.desc}</p>
