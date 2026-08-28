@@ -27,10 +27,12 @@ export const getOpenAIClient = () => {
 };
 
 // Text model — used by the AI Nutrition Assistant's chat (M3-1).
-export const AI_MODEL = "llama-3.3-70b-versatile";
+// Groq deprecated llama-3.3-70b-versatile in June 2026 in favor of this.
+export const AI_MODEL = "openai/gpt-oss-120b";
 
 // Vision model — used by AI Food Image Recognition (M3-2). Groq's vision
-// models are labeled "preview" and get renamed/rotated fairly often —
-// check https://console.groq.com/docs/models for the current vision
-// model name if this one starts returning a 400/404 "model not found".
-export const AI_VISION_MODEL = "llama-3.2-11b-vision-preview";
+// lineup changes often (llama-3.2-*-vision-preview and later
+// llama-4-scout were both since deprecated) — if this one starts
+// returning a 400/404 "model not found" / "decommissioned" error, check
+// https://console.groq.com/docs/models for the current vision model.
+export const AI_VISION_MODEL = "qwen/qwen3.6-27b";
