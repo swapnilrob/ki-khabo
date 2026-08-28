@@ -2,8 +2,8 @@ import asyncHandler from "express-async-handler";
 import Dish from "../models/Dish.js";
 import Review from "../models/Review.js";
 import Restaurant from "../models/Restaurant.js";
+import Order from "../models/Order.js";
 
-// Helper — finds the logged-in owner's restaurant
 const getOwnedRestaurant = async (userId, res) => {
   const restaurant = await Restaurant.findOne({ owner: userId });
   if (!restaurant) {
@@ -40,11 +40,10 @@ export const getMenuOverview = asyncHandler(async (req, res) => {
     dishes: items,
   }));
 
-  // Price range distribution
   const priceRanges = [
     { range: "Under ৳100", count: 0 },
-    { range: "৳100–300", count: 0 },
-    { range: "৳300–500", count: 0 },
+    { range: "৳100-300", count: 0 },
+    { range: "৳300-500", count: 0 },
     { range: "Over ৳500", count: 0 },
   ];
   dishes.forEach((d) => {
@@ -75,7 +74,6 @@ export const getDishRankings = asyncHandler(async (req, res) => {
   const restaurant = await getOwnedRestaurant(req.user._id, res);
   const dishes = await Dish.find({ restaurant: restaurant._id });
 
-  // Live ratings from reviews
   const dishesWithRatings = await Promise.all(
     dishes.map(async (d) => {
       const rating = await Review.getDishRating(d._id);
@@ -140,7 +138,7 @@ export const getRatingTrend = asyncHandler(async (req, res) => {
   ]);
 
   const formatted = trend.map((t) => ({
-    month: `${t._id.year}-${String(t._id.month).padStart(2, "0")}`,
+    month: t._id.year + "-" + String(t._id.month).padStart(2, "0"),
     avgRating: Math.round(t.avgRating * 10) / 10,
     reviewCount: t.count,
   }));
@@ -162,7 +160,6 @@ export const getReviewSummary = asyncHandler(async (req, res) => {
   const restaurantReviews = reviews.filter((r) => r.targetType === "restaurant");
   const dishReviews = reviews.filter((r) => r.targetType === "dish");
 
-  // Star distribution
   const starDist = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
   reviews.forEach((r) => {
     const star = Math.round(r.rating);
@@ -184,4 +181,90 @@ export const getReviewSummary = asyncHandler(async (req, res) => {
       starDistribution: starDist,
     },
   });
+});
+
+// @desc   Order overview — totals, revenue, status breakdown
+// @route  GET /api/analytics/order-overview
+// @access Private/Owner
+export const getOrderOverview = asyncHandler(async (req, res) => {
+  const restaurant = await getOwnedRestaurant(req.user._id, res);
+  const orders = await Order.find({ restaurant: restaurant._id });
+
+  const totalOrders = orders.filter((o) => o.type === "order").length;
+  const totalReservations = orders.filter((o) => o.type === "reservation").length;
+  const totalRevenue = orders
+    .filter((o) => o.type === "order" && (o.status === "completed" || o.status === "approved"))
+    .reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+
+  const statusBreakdown = {};
+  orders.forEach((o) => {
+    statusBreakdown[o.status] = (statusBreakdown[o.status] || 0) + 1;
+  });
+
+  const avgOrderValue = totalOrders > 0
+    ? Math.round(orders.filter((o) => o.type === "order").reduce((s, o) => s + (o.totalAmount || 0), 0) / totalOrders)
+    : 0;
+
+  res.json({
+    success: true,
+    orderOverview: {
+      totalOrders,
+      totalReservations,
+      totalRevenue,
+      avgOrderValue,
+      statusBreakdown,
+    },
+  });
+});
+
+// @desc   Best-selling dishes by order quantity
+// @route  GET /api/analytics/best-sellers
+// @access Private/Owner
+export const getBestSellers = asyncHandler(async (req, res) => {
+  const restaurant = await getOwnedRestaurant(req.user._id, res);
+
+  const result = await Order.aggregate([
+    { $match: { restaurant: restaurant._id, type: "order", status: { $in: ["approved", "completed"] } } },
+    { $unwind: "$items" },
+    {
+      $group: {
+        _id: "$items.dish",
+        name: { $first: "$items.name" },
+        totalQuantity: { $sum: "$items.quantity" },
+        totalRevenue: { $sum: { $multiply: ["$items.price", "$items.quantity"] } },
+        orderCount: { $sum: 1 },
+      },
+    },
+    { $sort: { totalQuantity: -1 } },
+    { $limit: 10 },
+  ]);
+
+  res.json({ success: true, bestSellers: result });
+});
+
+// @desc   Revenue trend over time (monthly)
+// @route  GET /api/analytics/revenue-trend
+// @access Private/Owner
+export const getRevenueTrend = asyncHandler(async (req, res) => {
+  const restaurant = await getOwnedRestaurant(req.user._id, res);
+
+  const trend = await Order.aggregate([
+    { $match: { restaurant: restaurant._id, type: "order", status: { $in: ["approved", "completed"] } } },
+    {
+      $group: {
+        _id: { year: { $year: "$createdAt" }, month: { $month: "$createdAt" } },
+        revenue: { $sum: "$totalAmount" },
+        orderCount: { $sum: 1 },
+      },
+    },
+    { $sort: { "_id.year": 1, "_id.month": 1 } },
+  ]);
+
+  const formatted = trend.map((t) => ({
+    month: t._id.year + "-" + String(t._id.month).padStart(2, "0"),
+    revenue: t.revenue,
+    orderCount: t.orderCount,
+  }));
+
+  res.json({ success: true, revenueTrend: formatted });
 });
