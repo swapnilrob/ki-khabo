@@ -1,6 +1,6 @@
 import asyncHandler from "express-async-handler";
 import MealLog from "../models/MealLog.js";
-import { getOpenAIClient, AI_MODEL } from "../utils/openaiClient.js";
+import { getOpenAIClient, AI_VISION_MODEL } from "../utils/openaiClient.js";
 import { getRemainingCalories, getCandidateDishes } from "../utils/dailyIntakeSummary.js";
 
 // M3-2 — AI Food Image Recognition (Mostahid)
@@ -86,7 +86,7 @@ export const recognizeFood = asyncHandler(async (req, res) => {
   try {
     const openai = getOpenAIClient();
     completion = await openai.chat.completions.create({
-      model: AI_MODEL,
+      model: AI_VISION_MODEL,
       messages: [
         { role: "system", content: RECOGNITION_SYSTEM_PROMPT },
         {
