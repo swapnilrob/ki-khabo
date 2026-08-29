@@ -26,3 +26,6 @@ export const fetchMyReviews = () =>
 // ── Owner action ──
 export const respondToReview = (id, text) =>
   api.put(`/reviews/${id}/response`, { text }).then((r) => r.data); 
+
+export const checkReviewEligibility = (restaurantId) =>
+  api.get(`/reviews/eligibility/${restaurantId}`).then((r) => r.data);  

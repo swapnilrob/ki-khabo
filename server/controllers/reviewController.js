@@ -1,6 +1,8 @@
 import asyncHandler from "express-async-handler";
 import Review from "../models/Review.js";
 import Restaurant from "../models/Restaurant.js";
+import Order from "../models/Order.js";
+import { awardPoints } from "./rewardController.js"; 
 
 // Shape a review for the client (keeps responses consistent + hides nothing sensitive)
 const publicReview = (r) => ({
@@ -17,6 +19,36 @@ const publicReview = (r) => ({
   createdAt: r.createdAt,
   updatedAt: r.updatedAt,
 });
+
+
+// @desc   Check if user can review restaurant/dishes (must have completed order)
+// @route  GET /api/reviews/eligibility/:restaurantId
+// @access Private
+export const checkEligibility = asyncHandler(async (req, res) => {
+  const completedOrders = await Order.find({
+    user: req.user._id,
+    restaurant: req.params.restaurantId,
+    status: "completed",
+  });
+
+  const canReviewRestaurant = completedOrders.length > 0;
+
+  // Collect all dish IDs from completed orders
+  const eligibleDishIds = new Set();
+  completedOrders.forEach((order) => {
+    order.items?.forEach((item) => {
+      if (item.dish) eligibleDishIds.add(item.dish.toString());
+    });
+  });
+
+  res.json({
+    success: true,
+    canReviewRestaurant,
+    eligibleDishIds: [...eligibleDishIds],
+  });
+}); 
+
+
 
 // @desc   Create a review (a dish rating OR an ambience/experience rating)
 // @route  POST /api/reviews
@@ -63,6 +95,28 @@ export const createReview = asyncHandler(async (req, res) => {
   //   );
   // }
   
+
+
+    // 3b. Purchase validation — user must have a completed order
+  const orderFilter = {
+    user: req.user._id,
+    restaurant,
+    status: "completed",
+  };
+
+  if (targetType === "dish") {
+    orderFilter["items.dish"] = dish;
+  }
+
+  const hasOrder = await Order.findOne(orderFilter);
+  if (!hasOrder) {
+    res.status(403);
+    throw new Error(
+      targetType === "dish"
+        ? "You can only review a dish you have purchased"
+        : "You can only review a restaurant you have ordered from"
+    );
+  } 
 
   // 4. Create
   const review = await Review.create({
