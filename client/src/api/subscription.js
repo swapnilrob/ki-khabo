@@ -3,8 +3,11 @@ import api from "./axios";
 export const getPlans = () =>
   api.get("/subscription/plans").then((r) => r.data);
 
-export const subscribe = (payload) =>
-  api.post("/subscription/subscribe", payload).then((r) => r.data);
+export const createCheckout = (plan) =>
+  api.post("/subscription/create-checkout", { plan }).then((r) => r.data);
+
+export const verifyCheckout = (sessionId) =>
+  api.post("/subscription/verify", { sessionId }).then((r) => r.data);
 
 export const getSubscriptionStatus = () =>
   api.get("/subscription/status").then((r) => r.data);

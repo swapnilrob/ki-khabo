@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import AppLayout from "../components/AppLayout";
 import {
   getPlans,
-  subscribe,
+  createCheckout,
+  verifyCheckout,
   getSubscriptionStatus,
   getSubscriptionHistory,
   cancelSubscription,
@@ -13,6 +14,7 @@ import "./Subscription.css";
 
 export default function Subscription() {
   const { user, updateUser } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [plans, setPlans] = useState(null);
   const [features, setFeatures] = useState({ free: [], premium: [] });
@@ -20,14 +22,12 @@ export default function Subscription() {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Form state
   const [selectedPlan, setSelectedPlan] = useState("monthly");
-  const [paymentMethod, setPaymentMethod] = useState("");
-  const [paymentNumber, setPaymentNumber] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [confirmation, setConfirmation] = useState(null);
 
+  // Load plans, status, history
   useEffect(() => {
     const load = async () => {
       try {
@@ -49,53 +49,62 @@ export default function Subscription() {
     load();
   }, []);
 
-  const handleSubscribe = async () => {
+  // Handle Stripe redirect back with session_id
+  useEffect(() => {
+    const sessionId = searchParams.get("session_id");
+    const success = searchParams.get("success");
+
+    if (success === "true" && sessionId) {
+      setSubmitting(true);
+      verifyCheckout(sessionId)
+        .then((result) => {
+          setConfirmation(result.subscription);
+          updateUser({
+            ...user,
+            isPremium: true,
+            premiumExpiry: result.subscription.endDate,
+            subscriptionPlan: result.subscription.plan,
+          });
+          return Promise.all([
+            getSubscriptionStatus(),
+            getSubscriptionHistory(),
+          ]);
+        })
+        .then(([statusData, historyData]) => {
+          setStatus(statusData);
+          setHistory(historyData.subscriptions || []);
+        })
+        .catch((err) => {
+          setError(err.response?.data?.message || "Failed to verify payment");
+        })
+        .finally(() => {
+          setSubmitting(false);
+          // Clean up URL params
+          setSearchParams({});
+        });
+    }
+
+    if (searchParams.get("cancelled") === "true") {
+      setError("Payment was cancelled. You can try again anytime.");
+      setSearchParams({});
+    }
+  }, [searchParams]);
+
+  const handleCheckout = async () => {
     setError("");
-
-    if (!paymentMethod) {
-      setError("Please select a payment method");
-      return;
-    }
-    if (paymentMethod === "bkash" && !paymentNumber.trim()) {
-      setError("Please enter your bKash number");
-      return;
-    }
-
     setSubmitting(true);
     try {
-      const result = await subscribe({
-        plan: selectedPlan,
-        paymentMethod,
-        paymentNumber: paymentNumber.trim(),
-      });
-
-      setConfirmation(result.subscription);
-
-      // Update user in AuthContext
-      updateUser({
-        ...user,
-        isPremium: true,
-        premiumExpiry: result.subscription.endDate,
-        subscriptionPlan: result.subscription.plan,
-      });
-
-      // Refresh status and history
-      const [statusData, historyData] = await Promise.all([
-        getSubscriptionStatus(),
-        getSubscriptionHistory(),
-      ]);
-      setStatus(statusData);
-      setHistory(historyData.subscriptions || []);
+      const result = await createCheckout(selectedPlan);
+      // Redirect to Stripe Checkout
+      window.location.href = result.checkoutUrl;
     } catch (err) {
-      setError(err.response?.data?.message || "Payment failed. Please try again.");
-    } finally {
+      setError(err.response?.data?.message || "Failed to start checkout");
       setSubmitting(false);
     }
   };
 
   const handleCancel = async () => {
     if (!window.confirm("Are you sure you want to cancel your premium subscription?")) return;
-
     try {
       await cancelSubscription();
       updateUser({
@@ -106,7 +115,6 @@ export default function Subscription() {
       });
       setStatus({ isPremium: false, activeSubscription: null });
       setConfirmation(null);
-
       const historyData = await getSubscriptionHistory();
       setHistory(historyData.subscriptions || []);
     } catch (err) {
@@ -135,28 +143,36 @@ export default function Subscription() {
         Unlock AI-powered features with Ki Khabo Premium
       </p>
 
-      {/* ── Confirmation after successful payment ── */}
+      {/* ── Verifying payment spinner ── */}
+      {submitting && !confirmation && (
+        <div style={{ textAlign: "center", padding: 40, color: "var(--kk-text-secondary)" }}>
+          <p style={{ fontSize: 18 }}>⏳ Verifying your payment...</p>
+          <p style={{ fontSize: 13 }}>Please wait, do not close this page.</p>
+        </div>
+      )}
+
+      {/* ── Confirmation ── */}
       {confirmation && (
         <div className="kk-sub-confirm">
           <span className="kk-sub-confirm__icon">🎉</span>
           <h3 className="kk-sub-confirm__title">Payment Successful!</h3>
           <p className="kk-sub-confirm__detail">
-            Transaction ID: {confirmation.transactionId}
-          </p>
-          <p className="kk-sub-confirm__detail">
-            Plan: {confirmation.plan} · ৳{confirmation.amount}
+            Plan: {confirmation.plan === "monthly" ? "Monthly" : "Yearly"} · ৳{confirmation.amount}
           </p>
           <p className="kk-sub-confirm__detail">
             Valid until: {new Date(confirmation.endDate).toLocaleDateString()}
           </p>
           <p className="kk-sub-confirm__detail">
-            Payment: {confirmation.paymentMethod === "bkash" ? "bKash" : "SSLCommerz"}
+            Payment: Stripe (Test Mode)
+          </p>
+          <p className="kk-sub-confirm__detail">
+            Transaction: {confirmation.transactionId?.substring(0, 30)}...
           </p>
         </div>
       )}
 
-      {/* ── Active subscription banner ── */}
-      {status?.isPremium && status?.activeSubscription && !confirmation && (
+      {/* ── Active subscription ── */}
+      {status?.isPremium && status?.activeSubscription && !confirmation && !submitting && (
         <div className="kk-sub-active">
           <span className="kk-sub-active__label">Active Subscription</span>
           <h3 className="kk-sub-active__plan">
@@ -166,7 +182,7 @@ export default function Subscription() {
             Valid until: {new Date(status.activeSubscription.endDate).toLocaleDateString()}
           </p>
           <p style={{ fontSize: 13, color: "var(--kk-text-muted)", margin: "2px 0", fontFamily: "var(--kk-font-mono)" }}>
-            Transaction: {status.activeSubscription.transactionId}
+            Paid via: {status.activeSubscription.paymentMethod === "stripe" ? "Stripe" : status.activeSubscription.paymentMethod}
           </p>
           <button
             className="kk-btn kk-btn--danger kk-btn--sm"
@@ -178,11 +194,10 @@ export default function Subscription() {
         </div>
       )}
 
-      {/* ── Plan selection (only when not premium) ── */}
-      {!status?.isPremium && plans && (
+      {/* ── Plan selection ── */}
+      {!status?.isPremium && plans && !submitting && (
         <>
           <div className="kk-sub-plans">
-            {/* Monthly card */}
             <div
               className={`kk-sub-card ${selectedPlan === "monthly" ? "kk-sub-card--selected" : ""}`}
               onClick={() => setSelectedPlan("monthly")}
@@ -192,107 +207,63 @@ export default function Subscription() {
                 ৳{plans.monthly.price} <small>/month</small>
               </p>
               <ul className="kk-sub-features">
-                {features.premium.map((f) => (
-                  <li key={f}>{f}</li>
-                ))}
+                {features.premium.map((f) => <li key={f}>{f}</li>)}
               </ul>
             </div>
 
-            {/* Yearly card */}
             <div
               className={`kk-sub-card ${selectedPlan === "yearly" ? "kk-sub-card--selected" : ""}`}
               onClick={() => setSelectedPlan("yearly")}
             >
               {plans.yearly.savings > 0 && (
-                <span className="kk-sub-card__badge">
-                  Save ৳{plans.yearly.savings}/year
-                </span>
+                <span className="kk-sub-card__badge">Save ৳{plans.yearly.savings}/year</span>
               )}
               <p className="kk-sub-card__plan">Yearly</p>
               <p className="kk-sub-card__price">
                 ৳{plans.yearly.price} <small>/year</small>
               </p>
               <ul className="kk-sub-features">
-                {features.premium.map((f) => (
-                  <li key={f}>{f}</li>
-                ))}
+                {features.premium.map((f) => <li key={f}>{f}</li>)}
               </ul>
             </div>
           </div>
 
-          {/* Payment section */}
+          {/* Stripe checkout button */}
           <div className="kk-sub-payment">
             <h3 style={{ margin: "0 0 4px", fontSize: 16, fontWeight: 600 }}>
-              Payment Method
+              Secure Payment via Stripe
             </h3>
-            <p style={{ fontSize: 13, color: "var(--kk-text-muted)", margin: 0 }}>
-              Select how you'd like to pay
+            <p style={{ fontSize: 13, color: "var(--kk-text-muted)", margin: "0 0 16px" }}>
+              You'll be redirected to Stripe's secure checkout page to complete your payment.
+              Use test card: <strong style={{ fontFamily: "var(--kk-font-mono)" }}>4242 4242 4242 4242</strong>
             </p>
 
-            <div className="kk-sub-payment__methods">
-              <button
-                className={`kk-sub-payment__method ${paymentMethod === "bkash" ? "kk-sub-payment__method--selected" : ""}`}
-                onClick={() => setPaymentMethod("bkash")}
-              >
-                📱 bKash
-              </button>
-              <button
-                className={`kk-sub-payment__method ${paymentMethod === "sslcommerz" ? "kk-sub-payment__method--selected" : ""}`}
-                onClick={() => setPaymentMethod("sslcommerz")}
-              >
-                💳 SSLCommerz
-              </button>
-            </div>
-
-            {paymentMethod === "bkash" && (
-              <div className="kk-input-group" style={{ marginTop: 12 }}>
-                <label>bKash Account Number</label>
-                <input
-                  className="kk-input"
-                  type="tel"
-                  placeholder="e.g. 01XXXXXXXXX"
-                  value={paymentNumber}
-                  onChange={(e) => setPaymentNumber(e.target.value)}
-                />
-              </div>
-            )}
-
-            {paymentMethod === "sslcommerz" && (
-              <p style={{ fontSize: 13, color: "var(--kk-text-secondary)", marginTop: 12 }}>
-                You will be redirected to SSLCommerz secure payment gateway. (Simulated for demo)
-              </p>
-            )}
-
             {error && (
-              <div className="kk-error" style={{ marginTop: 12 }}>
-                {error}
-              </div>
+              <div className="kk-error" style={{ marginBottom: 12 }}>{error}</div>
             )}
 
             <button
               className="kk-btn kk-btn--primary"
-              style={{ marginTop: 16, width: "100%" }}
-              onClick={handleSubscribe}
+              style={{ width: "100%", fontSize: 15, padding: "12px 24px" }}
+              onClick={handleCheckout}
               disabled={submitting}
             >
               {submitting
-                ? "Processing payment…"
-                : `Pay ৳${plans[selectedPlan]?.price} — Activate Premium`}
+                ? "Redirecting to Stripe…"
+                : `💳 Pay ৳${plans[selectedPlan]?.price} with Stripe`}
             </button>
           </div>
         </>
       )}
 
-      {/* ── Free plan features ── */}
-      {!status?.isPremium && features.free.length > 0 && (
+      {/* ── Free plan ── */}
+      {!status?.isPremium && features.free.length > 0 && !submitting && (
         <div style={{ marginTop: 24, padding: 20, background: "var(--kk-bg)", borderRadius: "var(--kk-radius)", border: "1px solid var(--kk-border)" }}>
           <h4 style={{ margin: "0 0 10px", fontSize: 15, fontWeight: 600 }}>
             Free Plan (Current)
           </h4>
           <ul className="kk-sub-features">
-            {features.free.map((f) => (
-              <li key={f}>{f}</li>
-            ))}
+            {features.free.map((f) => <li key={f}>{f}</li>)}
           </ul>
         </div>
       )}
@@ -300,9 +271,7 @@ export default function Subscription() {
       {/* ── Payment History ── */}
       {history.length > 0 && (
         <div className="kk-sub-history">
-          <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>
-            Payment History
-          </h3>
+          <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>Payment History</h3>
           <div style={{ background: "var(--kk-white)", borderRadius: "var(--kk-radius)", border: "1px solid var(--kk-border)" }}>
             {history.map((sub) => (
               <div key={sub._id} className="kk-sub-history__item">
@@ -311,7 +280,7 @@ export default function Subscription() {
                     {sub.plan === "monthly" ? "Monthly" : "Yearly"} Premium
                   </strong>
                   <p style={{ fontSize: 12, color: "var(--kk-text-muted)", margin: "2px 0 0", fontFamily: "var(--kk-font-mono)" }}>
-                    {sub.transactionId} · {sub.paymentMethod === "bkash" ? "bKash" : "SSLCommerz"}
+                    {sub.paymentMethod === "stripe" ? "Stripe" : sub.paymentMethod} · {new Date(sub.createdAt).toLocaleDateString()}
                   </p>
                 </div>
                 <div style={{ textAlign: "right" }}>
@@ -327,4 +296,4 @@ export default function Subscription() {
       )}
     </AppLayout>
   );
-} 
+}  

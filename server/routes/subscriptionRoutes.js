@@ -1,7 +1,8 @@
 import express from "express";
 import {
   getPlans,
-  subscribe,
+  createCheckout,
+  verifyCheckout,
   getStatus,
   getHistory,
   cancelSubscription,
@@ -11,7 +12,8 @@ import { protect, authorize } from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 router.get("/plans", getPlans);
-router.post("/subscribe", protect, authorize("user"), subscribe);
+router.post("/create-checkout", protect, authorize("user"), createCheckout);
+router.post("/verify", protect, verifyCheckout);
 router.get("/status", protect, getStatus);
 router.get("/history", protect, getHistory);
 router.post("/cancel", protect, authorize("user"), cancelSubscription);
