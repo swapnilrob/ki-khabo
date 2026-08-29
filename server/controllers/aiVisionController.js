@@ -52,7 +52,23 @@ export const parseRecognitionResult = (raw) => {
   try {
     parsed = JSON.parse(text);
   } catch {
-    const err = new Error("Could not parse the AI's response as JSON");
+    // Fallback: the model sometimes adds a sentence before/after the JSON
+    // despite instructions and response_format — pull out the first
+    // {...} block and try that instead of giving up immediately.
+    const match = text.match(/\{[\s\S]*\}/);
+    if (match) {
+      try {
+        parsed = JSON.parse(match[0]);
+      } catch {
+        parsed = null;
+      }
+    }
+  }
+
+  if (!parsed) {
+    const err = new Error(
+      `Could not parse the AI's response as JSON. Raw response started with: "${text.slice(0, 200)}"`
+    );
     err.statusCode = 502;
     throw err;
   }
@@ -83,29 +99,70 @@ export const recognizeFood = asyncHandler(async (req, res) => {
   }
 
   let completion;
+  const requestPayload = {
+    model: AI_VISION_MODEL,
+    messages: [
+      { role: "system", content: RECOGNITION_SYSTEM_PROMPT },
+      {
+        role: "user",
+        content: [
+          { type: "text", text: "Identify this meal and estimate its nutrition." },
+          { type: "image_url", image_url: { url: imageBase64 } },
+        ],
+      },
+    ],
+    max_tokens: 600,
+    temperature: 0.2,
+    // NOTE: response_format: { type: "json_object" } was tried here, but
+    // Groq's strict JSON-mode validator can itself hard-fail this specific
+    // model with a 400 "Failed to validate JSON" — a harder failure than
+    // just imperfect output. Relying on the system prompt's instruction
+    // plus parseRecognitionResult's fallback extraction (regex-pulls the
+    // first {...} block if there's leading/trailing prose) is more
+    // resilient in practice than the API's own enforcement here.
+    //
+    // NOTE: reasoning_format: "hidden" was tried too, but for the Qwen3
+    // model family that only suppresses the reasoning *output* — the
+    // model still burns its max_tokens budget on internal thinking first,
+    // which left nothing for the actual answer (empty `content`).
+    // reasoning_effort: "none" actually disables thinking mode for Qwen3
+    // models, so the full token budget goes to the real answer.
+    reasoning_effort: "none",
+  };
+
   try {
     const openai = getOpenAIClient();
-    completion = await openai.chat.completions.create({
-      model: AI_VISION_MODEL,
-      messages: [
-        { role: "system", content: RECOGNITION_SYSTEM_PROMPT },
-        {
-          role: "user",
-          content: [
-            { type: "text", text: "Identify this meal and estimate its nutrition." },
-            { type: "image_url", image_url: { url: imageBase64 } },
-          ],
-        },
-      ],
-      max_tokens: 300,
-      temperature: 0.2,
-    });
+    completion = await openai.chat.completions.create(requestPayload);
   } catch (err) {
-    res.status(err.statusCode || 502);
-    throw new Error("Food recognition service is temporarily unavailable: " + err.message);
+    // One retry: a 400 json_validate_failed from Groq's own generation
+    // (not a malformed-response issue we can parse around) sometimes
+    // succeeds on a second attempt since generation is non-deterministic.
+    if (err.status === 400) {
+      try {
+        const openai = getOpenAIClient();
+        completion = await openai.chat.completions.create(requestPayload);
+      } catch (retryErr) {
+        res.status(retryErr.statusCode || 502);
+        throw new Error("Food recognition service is temporarily unavailable: " + retryErr.message);
+      }
+    } else {
+      res.status(err.statusCode || 502);
+      throw new Error("Food recognition service is temporarily unavailable: " + err.message);
+    }
   }
 
   const raw = completion.choices[0]?.message?.content || "";
+
+  if (!raw.trim()) {
+    // Distinct from a malformed-JSON response — the model returned nothing
+    // at all (e.g. hit max_tokens before finishing, or a genuinely empty
+    // generation). Different cause, so a different, clearer message.
+    res.status(502);
+    throw new Error(
+      "The AI returned an empty response — this can happen with unclear or very large photos. Try a clearer, closer shot."
+    );
+  }
+
   const recognized = parseRecognitionResult(raw);
 
   const remaining = await getRemainingCalories(req.user);
