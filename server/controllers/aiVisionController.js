@@ -120,7 +120,14 @@ export const recognizeFood = asyncHandler(async (req, res) => {
     // plus parseRecognitionResult's fallback extraction (regex-pulls the
     // first {...} block if there's leading/trailing prose) is more
     // resilient in practice than the API's own enforcement here.
-    reasoning_format: "hidden",
+    //
+    // NOTE: reasoning_format: "hidden" was tried too, but for the Qwen3
+    // model family that only suppresses the reasoning *output* — the
+    // model still burns its max_tokens budget on internal thinking first,
+    // which left nothing for the actual answer (empty `content`).
+    // reasoning_effort: "none" actually disables thinking mode for Qwen3
+    // models, so the full token budget goes to the real answer.
+    reasoning_effort: "none",
   };
 
   try {
@@ -145,6 +152,17 @@ export const recognizeFood = asyncHandler(async (req, res) => {
   }
 
   const raw = completion.choices[0]?.message?.content || "";
+
+  if (!raw.trim()) {
+    // Distinct from a malformed-JSON response — the model returned nothing
+    // at all (e.g. hit max_tokens before finishing, or a genuinely empty
+    // generation). Different cause, so a different, clearer message.
+    res.status(502);
+    throw new Error(
+      "The AI returned an empty response — this can happen with unclear or very large photos. Try a clearer, closer shot."
+    );
+  }
+
   const recognized = parseRecognitionResult(raw);
 
   const remaining = await getRemainingCalories(req.user);
