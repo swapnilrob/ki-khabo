@@ -4,6 +4,8 @@ import User from "../models/User.js";
 import Subscription from "../models/Subscription.js";
 import Settings from "../models/Settings.js";
 import { awardPoints } from "./rewardController.js";
+import notify from "../utils/notify.js";
+import { subscriptionEmail } from "../utils/emailTemplates.js";
 
 const getStripe = () => new Stripe(process.env.STRIPE_SECRET_KEY); 
 
@@ -167,6 +169,8 @@ export const verifyCheckout = asyncHandler(async (req, res) => {
   user.premiumExpiry = endDate;
   user.subscriptionPlan = plan;
   await user.save();
+  const tpl = subscriptionEmail(user.name, "activated", subscription.planName);
+  notify({ userId: user._id, userEmail: user.email, type: "subscription_activated", title: "Premium activated", message: "Your premium subscription is now active.", link: "/app/subscription", emailSubject: tpl.subject, emailHtml: tpl.html });
 
   // Award points
   await awardPoints(
@@ -263,6 +267,9 @@ export const cancelSubscription = asyncHandler(async (req, res) => {
 
   subscription.status = "cancelled";
   await subscription.save();
+
+  const tpl = subscriptionEmail(user.name, "cancelled");
+  notify({ userId: user._id, userEmail: user.email, type: "subscription_cancelled", title: "Subscription cancelled", message: "Your premium subscription has been cancelled.", link: "/app/subscription", emailSubject: tpl.subject, emailHtml: tpl.html });
 
   const user = await User.findById(req.user._id);
   user.isPremium = false;

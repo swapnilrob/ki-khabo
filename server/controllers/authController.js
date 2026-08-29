@@ -3,6 +3,8 @@ import User from "../models/User.js";
 import Restaurant from "../models/Restaurant.js";
 import { generateToken } from "../utils/generateToken.js";
 import { DIETARY_PREFERENCES, ALLERGENS } from "../constants/dietaryOptions.js";
+import notify from "../utils/notify.js";
+import { applicationReceivedEmail } from "../utils/emailTemplates.js";
 
 const publicUser = (user) => ({
   id: user._id,
@@ -87,7 +89,8 @@ export const registerOwner = asyncHandler(async (req, res) => {
       status: "pending",
     });
 
-    // TODO (Swapnil, M3-5): email the owner "application received"
+    const tpl = applicationReceivedEmail(owner.name, restaurant.businessName);
+    notify({ userId: owner._id, userEmail: owner.email, type: "application_received", title: "Application received", message: "Your restaurant " + restaurant.businessName + " is under review.", link: "/owner", emailSubject: tpl.subject, emailHtml: tpl.html });
 
     res.status(201).json({
       success: true,

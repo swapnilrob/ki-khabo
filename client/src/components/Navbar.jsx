@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import "./Navbar.css";
+import NotificationBell from "./NotificationBell";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -46,6 +47,7 @@ export default function Navbar() {
 
         {/* ── Right side ── */}
         <div className="kk-navbar__actions">
+          {user && <NotificationBell />}
           <div className="kk-navbar__search">
             <svg className="kk-navbar__search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="11" cy="11" r="8" />

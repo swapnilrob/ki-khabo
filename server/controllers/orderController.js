@@ -2,6 +2,9 @@ import asyncHandler from "express-async-handler";
 import Order from "../models/Order.js";
 import Restaurant from "../models/Restaurant.js";
 import Dish from "../models/Dish.js";
+import User from "../models/User.js";
+import notify from "../utils/notify.js";
+import { orderPlacedEmail, orderStatusEmail, newOrderForOwnerEmail } from "../utils/emailTemplates.js";
 
 // @desc   Place a food order
 // @route  POST /api/orders
@@ -59,6 +62,15 @@ export const placeOrder = asyncHandler(async (req, res) => {
   });
 
   res.status(201).json({ success: true, order });
+
+  // ── M3-5 Notifications ──
+  const ownerUser = await User.findById(restaurant.owner);
+  const emailUser = orderPlacedEmail(req.user.name, "order", restaurant.businessName, totalAmount);
+  notify({ userId: req.user._id, userEmail: req.user.email, type: "order_placed", title: "Order placed", message: "Your order at " + restaurant.businessName + " has been placed.", link: "/app/orders", emailSubject: emailUser.subject, emailHtml: emailUser.html });
+  if (ownerUser) {
+    const emailOwner = newOrderForOwnerEmail(ownerUser.name, "order", req.user.name, totalAmount);
+    notify({ userId: ownerUser._id, userEmail: ownerUser.email, type: "new_order_for_owner", title: "New order received", message: req.user.name + " placed an order.", link: "/owner/orders", emailSubject: emailOwner.subject, emailHtml: emailOwner.html });
+  }
 });
 
 // @desc   Reserve a table
@@ -99,6 +111,15 @@ export const reserveTable = asyncHandler(async (req, res) => {
   });
 
   res.status(201).json({ success: true, order });
+
+  // ── M3-5 Notifications ──
+  const resOwner = await User.findById(restaurant.owner);
+  const emailRes = orderPlacedEmail(req.user.name, "reservation", restaurant.businessName);
+  notify({ userId: req.user._id, userEmail: req.user.email, type: "reservation_placed", title: "Reservation placed", message: "Your reservation at " + restaurant.businessName + " has been placed.", link: "/app/orders", emailSubject: emailRes.subject, emailHtml: emailRes.html });
+  if (resOwner) {
+    const emailResOwner = newOrderForOwnerEmail(resOwner.name, "reservation", req.user.name);
+    notify({ userId: resOwner._id, userEmail: resOwner.email, type: "new_reservation_for_owner", title: "New reservation", message: req.user.name + " made a reservation.", link: "/owner/orders", emailSubject: emailResOwner.subject, emailHtml: emailResOwner.html });
+  }
 });
 
 // @desc   User's own orders/reservations
@@ -197,6 +218,13 @@ export const approveOrder = asyncHandler(async (req, res) => {
   order.status = "approved";
   await order.save();
   res.json({ success: true, message: "Order approved", order });
+
+  // ── M3-5 Notification ──
+  const approvedUser = await User.findById(order.user);
+  if (approvedUser) {
+    const tplApprove = orderStatusEmail(approvedUser.name, order.type, restaurant.businessName, "approved");
+    notify({ userId: approvedUser._id, userEmail: approvedUser.email, type: "order_approved", title: (order.type === "order" ? "Order" : "Reservation") + " approved", message: "Your " + order.type + " has been approved.", link: "/app/orders", emailSubject: tplApprove.subject, emailHtml: tplApprove.html });
+  }
 });
 
 // @desc   Reject an order/reservation
@@ -214,6 +242,13 @@ export const rejectOrder = asyncHandler(async (req, res) => {
   order.rejectionReason = req.body.reason || "";
   await order.save();
   res.json({ success: true, message: "Order rejected", order });
+
+  // ── M3-5 Notification ──
+  const rejectedUser = await User.findById(order.user);
+  if (rejectedUser) {
+    const tplReject = orderStatusEmail(rejectedUser.name, order.type, restaurant.businessName, "rejected", order.rejectionReason);
+    notify({ userId: rejectedUser._id, userEmail: rejectedUser.email, type: "order_rejected", title: (order.type === "order" ? "Order" : "Reservation") + " rejected", message: "Your " + order.type + " has been rejected.", link: "/app/orders", emailSubject: tplReject.subject, emailHtml: tplReject.html });
+  }
 });
 
 // @desc   Reschedule a reservation (owner offers new time)
@@ -236,6 +271,13 @@ export const rescheduleOrder = asyncHandler(async (req, res) => {
   order.rescheduledTime = newTime;
   await order.save();
   res.json({ success: true, message: "Reservation rescheduled — awaiting user confirmation", order });
+
+  // ── M3-5 Notification ──
+  const reschUser = await User.findById(order.user);
+  if (reschUser) {
+    const tplResch = orderStatusEmail(reschUser.name, order.type, restaurant.businessName, "rescheduled");
+    notify({ userId: reschUser._id, userEmail: reschUser.email, type: "order_rescheduled", title: "Reservation rescheduled", message: "The restaurant has proposed a new time.", link: "/app/orders", emailSubject: tplResch.subject, emailHtml: tplResch.html });
+  }
 });
 
 // @desc   Mark an order as completed
@@ -253,4 +295,11 @@ export const completeOrder = asyncHandler(async (req, res) => {
   order.reviewEligible = true;
   await order.save();
   res.json({ success: true, message: "Order completed — user can now leave a review", order });
+
+  // ── M3-5 Notification ──
+  const compUser = await User.findById(order.user);
+  if (compUser) {
+    const tplComp = orderStatusEmail(compUser.name, order.type, restaurant.businessName, "completed");
+    notify({ userId: compUser._id, userEmail: compUser.email, type: "order_completed", title: "Order completed", message: "Your order has been marked as completed.", link: "/app/orders", emailSubject: tplComp.subject, emailHtml: tplComp.html });
+  }
 });
