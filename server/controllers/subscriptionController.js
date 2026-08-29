@@ -1,16 +1,11 @@
 import asyncHandler from "express-async-handler";
+import Stripe from "stripe";
 import User from "../models/User.js";
 import Subscription from "../models/Subscription.js";
 import Settings from "../models/Settings.js";
-import { awardPoints } from "./rewardController.js"; 
+import { awardPoints } from "./rewardController.js";
 
-// Generate a fake transaction ID (simulating bKash/SSLCommerz)
-const generateTransactionId = (method) => {
-  const prefix = method === "bkash" ? "BK" : "SSL";
-  const random = Math.random().toString(36).substring(2, 10).toUpperCase();
-  const timestamp = Date.now().toString(36).toUpperCase();
-  return `${prefix}-${timestamp}-${random}`;
-};
+const getStripe = () => new Stripe(process.env.STRIPE_SECRET_KEY); 
 
 // @desc   Get subscription plans and pricing
 // @route  GET /api/subscription/plans
@@ -50,36 +45,20 @@ export const getPlans = asyncHandler(async (req, res) => {
         "Priority support",
       ],
     },
-  });
+  }); 
 });
 
-// @desc   Subscribe to premium
-// @route  POST /api/subscription/subscribe
+// @desc   Create Stripe checkout session
+// @route  POST /api/subscription/create-checkout
 // @access Private (user only)
-export const subscribe = asyncHandler(async (req, res) => {
-  const { plan, paymentMethod, paymentNumber } = req.body;
+export const createCheckout = asyncHandler(async (req, res) => {
+  const { plan } = req.body;
 
-  if (!plan || !paymentMethod) {
-    res.status(400);
-    throw new Error("Plan and payment method are required");
-  }
-
-  if (!["monthly", "yearly"].includes(plan)) {
+  if (!plan || !["monthly", "yearly"].includes(plan)) {
     res.status(400);
     throw new Error("Plan must be 'monthly' or 'yearly'");
   }
 
-  if (!["bkash", "sslcommerz"].includes(paymentMethod)) {
-    res.status(400);
-    throw new Error("Payment method must be 'bkash' or 'sslcommerz'");
-  }
-
-  if (paymentMethod === "bkash" && !paymentNumber) {
-    res.status(400);
-    throw new Error("bKash number is required");
-  }
-
-  // Check if user already has an active subscription
   const user = await User.findById(req.user._id);
   if (user.isPremium && user.premiumExpiry && user.premiumExpiry > new Date()) {
     res.status(400);
@@ -88,16 +67,80 @@ export const subscribe = asyncHandler(async (req, res) => {
     );
   }
 
-  // Get pricing from settings
   let settings = await Settings.findOne({ key: "platform" });
   if (!settings) settings = await Settings.create({ key: "platform" });
 
   const amount = plan === "monthly" ? settings.monthlyPrice : settings.yearlyPrice;
 
-  // Simulate payment processing
-  const transactionId = generateTransactionId(paymentMethod);
+  const session = await getStripe().checkout.sessions.create({
+    payment_method_types: ["card"],
+    mode: "payment",
+    customer_email: user.email, 
+    line_items: [
+      {
+        price_data: {
+          currency: "bdt",
+          product_data: {
+            name: `Ki Khabo Premium — ${plan === "monthly" ? "Monthly" : "Yearly"}`,
+            description: `${plan === "monthly" ? "1 month" : "1 year"} of premium access`,
+          },
+          unit_amount: amount * 100, // Stripe uses smallest currency unit (paisa)
+        },
+        quantity: 1,
+      },
+    ],
+    metadata: {
+      userId: req.user._id.toString(),
+      plan,
+      amount: amount.toString(),
+    },
+    success_url: `${process.env.CLIENT_URL}/app/subscription?success=true&session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${process.env.CLIENT_URL}/app/subscription?cancelled=true`,
+  });
 
-  // Calculate subscription dates
+  res.json({
+    success: true,
+    checkoutUrl: session.url,
+    sessionId: session.id,
+  });
+});
+
+// @desc   Verify Stripe session and activate premium
+// @route  POST /api/subscription/verify
+// @access Private
+export const verifyCheckout = asyncHandler(async (req, res) => {
+  const { sessionId } = req.body;
+
+  if (!sessionId) {
+    res.status(400);
+    throw new Error("Session ID is required");
+  }
+
+  // Check if this session was already used
+  const existingSub = await Subscription.findOne({ transactionId: sessionId });
+  if (existingSub) {
+    return res.json({
+      success: true,
+      message: "Subscription already activated",
+      subscription: existingSub,
+    });
+  }
+
+  const session = await getStripe().checkout.sessions.retrieve(sessionId);
+
+  if (session.payment_status !== "paid") {
+    res.status(400);
+    throw new Error("Payment not completed");
+  }
+
+  const { userId, plan, amount } = session.metadata;
+
+  if (userId !== req.user._id.toString()) {
+    res.status(403);
+    throw new Error("Session does not belong to this user");
+  }
+
+  // Calculate dates
   const startDate = new Date();
   const endDate = new Date();
   if (plan === "monthly") {
@@ -110,27 +153,28 @@ export const subscribe = asyncHandler(async (req, res) => {
   const subscription = await Subscription.create({
     user: req.user._id,
     plan,
-    amount,
-    paymentMethod,
-    transactionId,
+    amount: parseInt(amount),
+    paymentMethod: "stripe",
+    transactionId: sessionId,
     status: "active",
     startDate,
     endDate,
   });
 
-  // Activate premium on user
+  // Activate premium
+  const user = await User.findById(req.user._id);
   user.isPremium = true;
   user.premiumExpiry = endDate;
   user.subscriptionPlan = plan;
   await user.save();
 
-// M3-7: Award points for subscribing 
+  // Award points
   await awardPoints(
     req.user._id,
     "subscription_purchased",
-    `${plan} premium subscription activated`,
+    `${plan} premium subscription activated via Stripe`,
     subscription._id
-  ); 
+  );
 
   res.status(201).json({
     success: true,
@@ -159,7 +203,6 @@ export const getStatus = asyncHandler(async (req, res) => {
     status: "active",
   }).sort({ createdAt: -1 });
 
-  // Auto-expire if past end date
   if (activeSubscription && activeSubscription.endDate < new Date()) {
     activeSubscription.status = "expired";
     await activeSubscription.save();

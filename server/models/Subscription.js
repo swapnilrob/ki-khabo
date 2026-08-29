@@ -18,9 +18,9 @@ const subscriptionSchema = new mongoose.Schema(
     },
     paymentMethod: {
       type: String,
-      enum: ["bkash", "sslcommerz"],
+      enum: ["bkash", "sslcommerz", "stripe"],
       required: true,
-    },
+    }, 
     transactionId: {
       type: String,
       required: true,
