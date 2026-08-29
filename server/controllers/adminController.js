@@ -2,6 +2,8 @@ import asyncHandler from "express-async-handler";
 import User from "../models/User.js";
 import Restaurant from "../models/Restaurant.js";
 import Settings from "../models/Settings.js";
+import notify from "../utils/notify.js";
+import { applicationDecisionEmail } from "../utils/emailTemplates.js";
 
 // @desc   Platform overview stats
 // @route  GET /api/admin/stats
@@ -68,7 +70,8 @@ export const updateRestaurantStatus = asyncHandler(async (req, res) => {
   restaurant.reviewedAt = new Date();
   await restaurant.save();
 
-  // TODO (Swapnil, M3-5): email the owner about approval/rejection
+  const tpl = applicationDecisionEmail(restaurant.owner.name, restaurant.businessName, status, restaurant.rejectionReason);
+  notify({ userId: restaurant.owner._id, userEmail: restaurant.owner.email, type: status === "approved" ? "application_approved" : "application_rejected", title: "Restaurant " + status, message: "Your restaurant " + restaurant.businessName + " has been " + status + ".", link: "/owner", emailSubject: tpl.subject, emailHtml: tpl.html });
 
   res.json({
     success: true,

@@ -20,36 +20,20 @@ import nutritionRoutes from "./routes/nutritionRoutes.js";
 import recommendationRoutes from "./routes/recommendationRoutes.js";
 import analyticsRoutes from "./routes/analyticsRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
-import subscriptionRoutes from "./routes/subscriptionRoutes.js"; 
-import rewardRoutes from "./routes/rewardRoutes.js"; 
+import subscriptionRoutes from "./routes/subscriptionRoutes.js";
+import rewardRoutes from "./routes/rewardRoutes.js";
 import aiAssistantRoutes from "./routes/aiAssistantRoutes.js";
 import aiVisionRoutes from "./routes/aiVisionRoutes.js";
+import notificationRoutes from "./routes/notificationRoutes.js";
 
 dotenv.config();
 connectDB();
 
 const app = express();
 
-HEAD
 app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
-// M3-2 (Mostahid) — default 100kb is nowhere near enough for a
-// base64-encoded meal photo (base64 also inflates the raw file size by
-// ~33%). 8mb comfortably covers the 5MB image cap enforced in
-// aiVisionController.js plus that encoding overhead.
 app.use(express.json({ limit: "8mb" }));
 app.use(express.urlencoded({ extended: true, limit: "8mb" }));
-
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "http://localhost:5173");
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Origin,X-Requested-With,Content-Type,Accept,Authorization");
-  if (req.method === "OPTIONS") return res.sendStatus(200);
-  next();
-});
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-3da377b70fe8d6863beca36d46b237f4dd93fe71
 
 app.get("/api/health", (req, res) =>
   res.json({ status: "ok", service: "Ki Khabo API" })
@@ -59,25 +43,23 @@ app.get("/api/health", (req, res) =>
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/restaurants", restaurantRoutes);
-app.use("/api/nutrition", nutritionRoutes);           // Mostahid (M2-1)
-app.use("/api/reviews", reviewRoutes);                // Shakib (M1-4)
-app.use("/api/dishes", dishRoutes);                   // Swapnil (M1-2)
-app.use("/api/discover", discoverRoutes);             // Noman (M1-1)
+app.use("/api/nutrition", nutritionRoutes);            // Mostahid (M2-1)
+app.use("/api/reviews", reviewRoutes);                 // Shakib (M1-4)
+app.use("/api/dishes", dishRoutes);                    // Swapnil (M1-2)
+app.use("/api/discover", discoverRoutes);              // Noman (M1-1)
 app.use("/api/recommendations", recommendationRoutes); // Noman (M2-2)
-app.use("/api/follows", followRoutes);           // Shakib (M2-4)
-app.use("/api/saved-dishes", savedDishRoutes);   // Shakib (M2-4)
-app.use("/api/food-lists", foodListRoutes);      // Shakib (M2-4)
-app.use("/api/feed", feedRoutes);                 // Shakib (M2-4) 
-app.use("/api/orders", orderRoutes);               // Noman (M3-4)
-app.use("/api/meal-planner", mealPlannerRoutes); // Swapnil
-HEAD
-app.use("/api/analytics", analyticsRoutes);      // Swapnil (M3-3)
-app.use("/api/subscription", subscriptionRoutes); // Shakib (M3-6)
-app.use("/api/rewards", rewardRoutes);             // Shakib (M3-7)  
-app.use("/api/ai-assistant", aiAssistantRoutes);   // Mostahid (M3-1)
-app.use("/api/ai-vision", aiVisionRoutes);         // Mostahid (M3-2)
-
-3da377b70fe8d6863beca36d46b237f4dd93fe71
+app.use("/api/follows", followRoutes);                 // Shakib (M2-4)
+app.use("/api/saved-dishes", savedDishRoutes);         // Shakib (M2-4)
+app.use("/api/food-lists", foodListRoutes);            // Shakib (M2-4)
+app.use("/api/feed", feedRoutes);                      // Shakib (M2-4)
+app.use("/api/orders", orderRoutes);                   // Noman (M3-4)
+app.use("/api/meal-planner", mealPlannerRoutes);       // Swapnil (M2-3)
+app.use("/api/analytics", analyticsRoutes);            // Swapnil (M3-3)
+app.use("/api/subscription", subscriptionRoutes);      // Shakib (M3-6)
+app.use("/api/rewards", rewardRoutes);                 // Shakib (M3-7)
+app.use("/api/ai-assistant", aiAssistantRoutes);       // Mostahid (M3-1)
+app.use("/api/ai-vision", aiVisionRoutes);             // Mostahid (M3-2)
+app.use("/api/notifications", notificationRoutes);     // Swapnil (M3-5)
 // ───────────────────────────────────────────────────────────────────
 
 app.use(notFound);
@@ -86,4 +68,4 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () =>
   console.log(`🚀 Server running in ${process.env.NODE_ENV} on port ${PORT}`)
-);      
+);
