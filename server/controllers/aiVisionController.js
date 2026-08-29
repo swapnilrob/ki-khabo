@@ -52,7 +52,23 @@ export const parseRecognitionResult = (raw) => {
   try {
     parsed = JSON.parse(text);
   } catch {
-    const err = new Error("Could not parse the AI's response as JSON");
+    // Fallback: the model sometimes adds a sentence before/after the JSON
+    // despite instructions and response_format — pull out the first
+    // {...} block and try that instead of giving up immediately.
+    const match = text.match(/\{[\s\S]*\}/);
+    if (match) {
+      try {
+        parsed = JSON.parse(match[0]);
+      } catch {
+        parsed = null;
+      }
+    }
+  }
+
+  if (!parsed) {
+    const err = new Error(
+      `Could not parse the AI's response as JSON. Raw response started with: "${text.slice(0, 200)}"`
+    );
     err.statusCode = 502;
     throw err;
   }
@@ -97,8 +113,17 @@ export const recognizeFood = asyncHandler(async (req, res) => {
           ],
         },
       ],
-      max_tokens: 300,
+      max_tokens: 600,
       temperature: 0.2,
+      // qwen/qwen3.6-27b supports JSON mode — forces valid JSON output
+      // instead of relying purely on the prompt instruction, which models
+      // don't always follow strictly on their own.
+      response_format: { type: "json_object" },
+      // This model has a "thinking mode" that can otherwise mix reasoning
+      // text into the response and break JSON.parse. Groq only supports
+      // "parsed" or "hidden" here when combined with JSON mode — "hidden"
+      // keeps `content` as clean JSON with no reasoning tokens mixed in.
+      reasoning_format: "hidden",
     });
   } catch (err) {
     res.status(err.statusCode || 502);
