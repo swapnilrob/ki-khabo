@@ -99,35 +99,49 @@ export const recognizeFood = asyncHandler(async (req, res) => {
   }
 
   let completion;
+  const requestPayload = {
+    model: AI_VISION_MODEL,
+    messages: [
+      { role: "system", content: RECOGNITION_SYSTEM_PROMPT },
+      {
+        role: "user",
+        content: [
+          { type: "text", text: "Identify this meal and estimate its nutrition." },
+          { type: "image_url", image_url: { url: imageBase64 } },
+        ],
+      },
+    ],
+    max_tokens: 600,
+    temperature: 0.2,
+    // NOTE: response_format: { type: "json_object" } was tried here, but
+    // Groq's strict JSON-mode validator can itself hard-fail this specific
+    // model with a 400 "Failed to validate JSON" — a harder failure than
+    // just imperfect output. Relying on the system prompt's instruction
+    // plus parseRecognitionResult's fallback extraction (regex-pulls the
+    // first {...} block if there's leading/trailing prose) is more
+    // resilient in practice than the API's own enforcement here.
+    reasoning_format: "hidden",
+  };
+
   try {
     const openai = getOpenAIClient();
-    completion = await openai.chat.completions.create({
-      model: AI_VISION_MODEL,
-      messages: [
-        { role: "system", content: RECOGNITION_SYSTEM_PROMPT },
-        {
-          role: "user",
-          content: [
-            { type: "text", text: "Identify this meal and estimate its nutrition." },
-            { type: "image_url", image_url: { url: imageBase64 } },
-          ],
-        },
-      ],
-      max_tokens: 600,
-      temperature: 0.2,
-      // qwen/qwen3.6-27b supports JSON mode — forces valid JSON output
-      // instead of relying purely on the prompt instruction, which models
-      // don't always follow strictly on their own.
-      response_format: { type: "json_object" },
-      // This model has a "thinking mode" that can otherwise mix reasoning
-      // text into the response and break JSON.parse. Groq only supports
-      // "parsed" or "hidden" here when combined with JSON mode — "hidden"
-      // keeps `content` as clean JSON with no reasoning tokens mixed in.
-      reasoning_format: "hidden",
-    });
+    completion = await openai.chat.completions.create(requestPayload);
   } catch (err) {
-    res.status(err.statusCode || 502);
-    throw new Error("Food recognition service is temporarily unavailable: " + err.message);
+    // One retry: a 400 json_validate_failed from Groq's own generation
+    // (not a malformed-response issue we can parse around) sometimes
+    // succeeds on a second attempt since generation is non-deterministic.
+    if (err.status === 400) {
+      try {
+        const openai = getOpenAIClient();
+        completion = await openai.chat.completions.create(requestPayload);
+      } catch (retryErr) {
+        res.status(retryErr.statusCode || 502);
+        throw new Error("Food recognition service is temporarily unavailable: " + retryErr.message);
+      }
+    } else {
+      res.status(err.statusCode || 502);
+      throw new Error("Food recognition service is temporarily unavailable: " + err.message);
+    }
   }
 
   const raw = completion.choices[0]?.message?.content || "";
