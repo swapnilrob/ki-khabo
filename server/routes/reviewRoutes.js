@@ -7,7 +7,10 @@ import {
   updateReview,
   deleteReview,
   respondToReview,
-} from "../controllers/reviewController.js";
+  checkEligibility,
+} from "../controllers/reviewController.js"; 
+
+
 import { protect, authorize } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
@@ -21,6 +24,9 @@ router.get("/mine", protect, authorize("user"), getMyReviews);
 router.post("/", protect, authorize("user"), createReview);
 router.put("/:id", protect, authorize("user"), updateReview);
 router.delete("/:id", protect, authorize("user"), deleteReview);
+
+router.get("/eligibility/:restaurantId", protect, authorize("user"), checkEligibility); 
+
 
 // ── Owner action ──
 router.put("/:id/response", protect, authorize("owner"), respondToReview);

@@ -18,24 +18,24 @@ const NUTRIENTS = [
   ["fiber", "fiber g"],
 ];
 
-export default function DishCard({ dish, restaurantId }) {
+export default function DishCard({ dish, restaurantId, cartQty = 0, onAddToCart, canReviewDish }) {
   const { user } = useAuth();
   const [expanded, setExpanded] = useState(false);
   const [reviews, setReviews] = useState([]);
   const [reviewMeta, setReviewMeta] = useState({ average: 0, count: 0 });
   const [loaded, setLoaded] = useState(false);
 
-  // M2-1 — log this dish as a meal
   const [servings, setServings] = useState(1);
   const [logging, setLogging] = useState(false);
   const [logged, setLogged] = useState(false);
 
   const n = dish.nutrition || {};
+  const dishId = dish.id || dish._id;
 
   const toggleReviews = async () => {
     if (!expanded && !loaded) {
       try {
-        const res = await fetchDishReviews(dish.id);
+        const res = await fetchDishReviews(dishId);
         setReviews(res.reviews || []);
         setReviewMeta({
           average: res.rating?.average || 0,
@@ -66,10 +66,9 @@ export default function DishCard({ dish, restaurantId }) {
     setLogging(true);
     setLogged(false);
     try {
-      await logMeal(dish.id, servings, restaurantId);
+      await logMeal(dishId, servings, restaurantId);
       setLogged(true);
     } catch {
-      // swallow — button just won't show the "Logged ✓" confirmation
     } finally {
       setLogging(false);
     }
@@ -114,22 +113,53 @@ export default function DishCard({ dish, restaurantId }) {
         ))}
       </div>
 
-      {/* M2-1 — log this dish as a meal (food seekers only) */}
+      {/* Add to Cart + Log Meal row */}
       {user?.role === "user" && (
-        <div className="log-meal-row">
-          <input
-            type="number"
-            min={0.25}
-            step={0.25}
-            value={servings}
-            onChange={(e) => setServings(Number(e.target.value))}
-            className="servings-input"
-            aria-label="Servings"
-          />
-          <button className="log-meal-btn" onClick={handleLogMeal} disabled={logging}>
-            {logging ? "Logging…" : "🍽️ Log this meal"}
-          </button>
-          {logged && <span className="logged-msg">Logged ✓</span>}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 10, alignItems: "center", marginTop: 10 }}>
+          {/* Add to Cart */}
+          {onAddToCart && (
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              {cartQty > 0 ? (
+                <>
+                  <button
+                    className="kk-btn kk-btn--sm kk-btn--secondary"
+                    onClick={() => onAddToCart(dishId, -1)}
+                    style={{ minWidth: 32 }}
+                  >−</button>
+                  <span style={{ fontWeight: 700, minWidth: 20, textAlign: "center" }}>{cartQty}</span>
+                  <button
+                    className="kk-btn kk-btn--sm kk-btn--secondary"
+                    onClick={() => onAddToCart(dishId, 1)}
+                    style={{ minWidth: 32 }}
+                  >+</button>
+                </>
+              ) : (
+                <button
+                  className="kk-btn kk-btn--sm kk-btn--primary"
+                  onClick={() => onAddToCart(dishId, 1)}
+                >
+                  🛒 Add to Cart
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* Log Meal */}
+          <div className="log-meal-row" style={{ margin: 0 }}>
+            <input
+              type="number"
+              min={1}
+              step={1} 
+              value={servings}
+              onChange={(e) => setServings(Number(e.target.value))}
+              className="servings-input"
+              aria-label="Servings"
+            />
+            <button className="log-meal-btn" onClick={handleLogMeal} disabled={logging}>
+              {logging ? "Logging…" : "🍽️ Log this meal"}
+            </button>
+            {logged && <span className="logged-msg">Logged ✓</span>}
+          </div>
         </div>
       )}
 
@@ -150,7 +180,7 @@ export default function DishCard({ dish, restaurantId }) {
         }}
       >
         {expanded ? "✕ Hide Food Reviews" : "⭐ Food Reviews & Ratings"}
-      </button>  
+      </button>
 
       {/* Expanded review section */}
       {expanded && (
@@ -162,15 +192,19 @@ export default function DishCard({ dish, restaurantId }) {
             title={`Reviews for ${dish.name}`}
           />
 
-          {user ? (
+          {user && canReviewDish ? (
             <div style={{ marginTop: 16 }}>
               <ReviewForm
                 restaurantId={restaurantId}
                 targetType="dish"
-                dishId={dish.id}
+                dishId={dishId}
                 onSubmitted={handleNewReview}
               />
             </div>
+          ) : user ? (
+            <p style={{ color: "#888", marginTop: 12, fontSize: 13 }}>
+              You need to purchase this dish before leaving a review.
+            </p>
           ) : (
             <p style={{ color: "#666", marginTop: 12, fontSize: 14 }}>
               <Link to="/login">Log in</Link> to review this dish.
