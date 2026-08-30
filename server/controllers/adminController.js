@@ -4,6 +4,10 @@ import Restaurant from "../models/Restaurant.js";
 import Settings from "../models/Settings.js";
 import notify from "../utils/notify.js";
 import { applicationDecisionEmail } from "../utils/emailTemplates.js";
+import Review from "../models/Review.js";
+import Dish from "../models/Dish.js";
+import Order from "../models/Order.js";
+
 
 // @desc   Platform overview stats
 // @route  GET /api/admin/stats
@@ -161,4 +165,86 @@ export const updateSettings = asyncHandler(async (req, res) => {
   );
 
   res.json({ success: true, message: "Settings updated", settings });
+});
+
+// @desc   Get all reviews, optionally only flagged
+// @route  GET /api/admin/reviews?flagged=true
+export const getReviews = asyncHandler(async (req, res) => {
+  const filter = {};
+  if (req.query.flagged === "true") filter.flagged = true;
+
+  const reviews = await Review.find(filter)
+    .populate("user", "name email")
+    .populate("restaurant", "businessName")
+    .populate("dish", "name")
+    .sort({ createdAt: -1 });
+
+  res.json({ success: true, count: reviews.length, reviews });
+});
+
+// @desc   Remove a review (moderation)
+// @route  DELETE /api/admin/reviews/:id
+export const removeReview = asyncHandler(async (req, res) => {
+  const review = await Review.findById(req.params.id);
+  if (!review) {
+    res.status(404);
+    throw new Error("Review not found");
+  }
+
+  const restaurantId = review.restaurant;
+  await review.deleteOne();
+
+  // Recalculate the restaurant's average rating
+  await Review.syncRestaurantRating(restaurantId);
+
+  res.json({ success: true, message: "Review removed" });
+});
+
+// @desc   Unflag a review (approve it after moderation)
+// @route  PATCH /api/admin/reviews/:id/unflag
+export const unflagReview = asyncHandler(async (req, res) => {
+  const review = await Review.findById(req.params.id);
+  if (!review) {
+    res.status(404);
+    throw new Error("Review not found");
+  }
+
+  review.flagged = false;
+  review.flagReason = "";
+  await review.save();
+
+  res.json({ success: true, message: "Review approved" });
+});
+
+// @desc   Get dishes with unverified nutrition
+// @route  GET /api/admin/dishes?verified=false
+export const getDishes = asyncHandler(async (req, res) => {
+  const filter = {};
+  if (req.query.verified === "false") filter.nutritionVerified = false;
+  if (req.query.verified === "true") filter.nutritionVerified = true;
+
+  const dishes = await Dish.find(filter)
+    .populate("restaurant", "businessName")
+    .sort({ createdAt: -1 });
+
+  res.json({ success: true, count: dishes.length, dishes });
+});
+
+// @desc   Verify or reject a dish's nutritional data
+// @route  PATCH /api/admin/dishes/:id/verify
+export const verifyDishNutrition = asyncHandler(async (req, res) => {
+  const dish = await Dish.findById(req.params.id);
+  if (!dish) {
+    res.status(404);
+    throw new Error("Dish not found");
+  }
+
+  dish.nutritionVerified = req.body.verified !== false;
+  await dish.save();
+
+  res.json({
+    success: true,
+    message: dish.nutritionVerified ? "Nutrition data verified" : "Verification removed",
+    nutritionVerified: dish.nutritionVerified,
+  });
 });

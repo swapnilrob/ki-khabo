@@ -8,6 +8,7 @@ import {
   deleteReview,
   respondToReview,
   checkEligibility,
+  flagReview,
 } from "../controllers/reviewController.js"; 
 
 
@@ -28,7 +29,11 @@ router.delete("/:id", protect, authorize("user"), deleteReview);
 router.get("/eligibility/:restaurantId", protect, authorize("user"), checkEligibility); 
 
 
+router.patch("/:id/flag", protect, flagReview);
+
 // ── Owner action ──
 router.put("/:id/response", protect, authorize("owner"), respondToReview);
+
+router.patch("/:id/flag", protect, flagReview);
 
 export default router; 

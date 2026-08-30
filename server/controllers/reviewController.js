@@ -277,3 +277,21 @@ export const respondToReview = asyncHandler(async (req, res) => {
 
   res.json({ success: true, review: publicReview(review) });
 }); 
+
+// @desc   Flag a review for admin moderation
+// @route  PATCH /api/reviews/:id/flag
+// @access Private (user)
+export const flagReview = asyncHandler(async (req, res) => {
+  const review = await Review.findById(req.params.id);
+  if (!review) {
+    res.status(404);
+    throw new Error("Review not found");
+  }
+
+  review.flagged = true;
+  review.flagReason = req.body.reason || "Reported by user";
+  await review.save();
+
+  res.json({ success: true, message: "Review flagged for moderation" });
+});
+

@@ -59,6 +59,8 @@ const reviewSchema = new mongoose.Schema(
     },
 
     ownerResponse: { type: ownerResponseSchema, default: null },
+    flagged: { type: Boolean, default: false },
+    flagReason: { type: String, default: "", trim: true, maxlength: 500 },
   },
   { timestamps: true }
 );
