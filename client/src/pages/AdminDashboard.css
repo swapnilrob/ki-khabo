@@ -124,3 +124,105 @@
   border-radius: var(--kk-radius-sm);
   margin-bottom: var(--kk-space-5);
 }
+
+
+/* ── Admin tabs ── */
+.kk-admin-tabs {
+  display: flex;
+  gap: var(--kk-space-1);
+  flex-wrap: wrap;
+  margin-bottom: var(--kk-space-6);
+  border-bottom: 2px solid var(--kk-border-light);
+  padding-bottom: var(--kk-space-1);
+}
+
+.kk-admin-tab {
+  padding: var(--kk-space-2) var(--kk-space-4);
+  border: none;
+  background: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--kk-text-muted);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -3px;
+  cursor: pointer;
+  border-radius: 0;
+}
+
+.kk-admin-tab--active {
+  color: var(--kk-orange);
+  border-bottom-color: var(--kk-orange);
+}
+
+.kk-admin-tab:hover {
+  color: var(--kk-text);
+}
+
+/* ── Filters row ── */
+.kk-admin-filters {
+  display: flex;
+  gap: var(--kk-space-2);
+  flex-wrap: wrap;
+  margin-bottom: var(--kk-space-5);
+}
+
+/* ── Review card ── */
+.kk-admin-review {
+  padding: var(--kk-space-4);
+  margin-bottom: var(--kk-space-3);
+}
+
+.kk-admin-review__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--kk-space-2);
+  margin-bottom: var(--kk-space-2);
+}
+
+.kk-admin-review__user {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--kk-text);
+}
+
+.kk-admin-review__meta {
+  font-size: 12px;
+  color: var(--kk-text-muted);
+}
+
+.kk-admin-review__badges {
+  display: flex;
+  gap: var(--kk-space-2);
+}
+
+.kk-admin-review__comment {
+  font-size: 13px;
+  color: var(--kk-text-secondary);
+  line-height: 1.5;
+}
+
+.kk-admin-review__reason {
+  font-size: 12px;
+  color: var(--kk-red);
+  margin-top: var(--kk-space-1);
+}
+
+/* ── Settings ── */
+.kk-admin-settings {
+  padding: var(--kk-space-6);
+}
+
+.kk-admin-settings__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--kk-space-4);
+  margin: var(--kk-space-5) 0;
+}
+
+.kk-admin-settings__hint {
+  font-size: 12px;
+  color: var(--kk-text-muted);
+  margin-bottom: var(--kk-space-4);
+}
