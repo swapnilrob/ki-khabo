@@ -1,0 +1,44 @@
+.kk-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 4px;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+/* ── Variants ── */
+
+.kk-badge--default {
+  background: var(--kk-orange-light);
+  color: var(--kk-orange-hover);
+}
+
+.kk-badge--spicy {
+  background: var(--kk-red-light);
+  color: var(--kk-red);
+}
+
+.kk-badge--success {
+  background: var(--kk-green-light);
+  color: var(--kk-green);
+}
+
+.kk-badge--danger {
+  background: var(--kk-red-light);
+  color: var(--kk-red);
+}
+
+.kk-badge--info {
+  background: var(--kk-blue-light);
+  color: var(--kk-blue);
+}
+
+.kk-badge--neutral {
+  background: var(--kk-bg);
+  color: var(--kk-text-secondary);
+}

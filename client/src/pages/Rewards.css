@@ -1,0 +1,107 @@
+.kk-rewards-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--kk-space-4);
+  margin-top: var(--kk-space-5);
+}
+
+@media (max-width: 768px) {
+  .kk-rewards-summary { grid-template-columns: 1fr; }
+}
+
+.kk-rewards-stat {
+  padding: var(--kk-space-5);
+  border-radius: var(--kk-radius);
+  background: var(--kk-white);
+  border: 1px solid var(--kk-border);
+  text-align: center;
+}
+
+.kk-rewards-stat__value {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--kk-orange);
+  display: block;
+}
+
+.kk-rewards-stat__label {
+  font-size: 13px;
+  color: var(--kk-text-secondary);
+  margin-top: var(--kk-space-1);
+  display: block;
+}
+
+.kk-rewards-earn {
+  margin-top: var(--kk-space-6);
+  padding: var(--kk-space-5);
+  border-radius: var(--kk-radius);
+  background: var(--kk-white);
+  border: 1px solid var(--kk-border);
+}
+
+.kk-rewards-earn__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--kk-space-3);
+  margin-top: var(--kk-space-4);
+}
+
+@media (max-width: 768px) {
+  .kk-rewards-earn__grid { grid-template-columns: 1fr; }
+}
+
+.kk-rewards-earn__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--kk-space-4);
+  border-radius: var(--kk-radius-sm);
+  background: var(--kk-bg);
+}
+
+.kk-rewards-earn__action {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--kk-text);
+}
+
+.kk-rewards-earn__points {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--kk-orange);
+}
+
+.kk-rewards-redeem {
+  margin-top: var(--kk-space-6);
+  padding: var(--kk-space-5);
+  border-radius: var(--kk-radius);
+  background: var(--kk-orange-pale);
+  border: 1px solid var(--kk-orange);
+}
+
+.kk-rewards-history {
+  margin-top: var(--kk-space-6);
+}
+
+.kk-rewards-history__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--kk-space-4);
+  border-bottom: 1px solid var(--kk-border-light);
+  font-size: 14px;
+}
+
+.kk-rewards-history__item:last-child {
+  border-bottom: none;
+}
+
+.kk-rewards-points--positive {
+  color: var(--kk-green);
+  font-weight: 700;
+}
+
+.kk-rewards-points--negative {
+  color: var(--kk-red);
+  font-weight: 700;
+} 

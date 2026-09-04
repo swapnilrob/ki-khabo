@@ -1,0 +1,139 @@
+/* ═══════════════════════════════════════════════════════════════
+   Auth Pages — Login, Register, RegisterOwner
+   ═══════════════════════════════════════════════════════════════ */
+
+.kk-auth-page {
+  min-height: calc(100vh - var(--kk-navbar-h));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--kk-space-6);
+}
+
+.kk-auth-card {
+  background: var(--kk-white);
+  border: 1px solid var(--kk-border);
+  border-radius: var(--kk-radius);
+  box-shadow: var(--kk-shadow-md);
+  padding: var(--kk-space-7);
+  width: 100%;
+  max-width: 420px;
+}
+
+.kk-auth-card h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: var(--kk-space-1);
+}
+
+.kk-auth-card .kk-auth-subtitle {
+  font-size: 13px;
+  color: var(--kk-text-muted);
+  margin-bottom: var(--kk-space-6);
+}
+
+.kk-auth-card .kk-auth-step {
+  font-size: 12px;
+  font-family: var(--kk-font-mono);
+  color: var(--kk-orange);
+  font-weight: 500;
+  margin-bottom: var(--kk-space-5);
+}
+
+
+/* ── Inputs ── */
+
+.kk-input-group {
+  margin-bottom: var(--kk-space-4);
+}
+
+.kk-input-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--kk-text-secondary);
+  margin-bottom: var(--kk-space-1);
+}
+
+.kk-input {
+  width: 100%;
+  height: 42px;
+  padding: 0 var(--kk-space-4);
+  background: var(--kk-bg);
+  border: 1px solid var(--kk-border);
+  border-radius: var(--kk-radius-sm);
+  font-size: 14px;
+  color: var(--kk-text);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.kk-input:focus {
+  outline: none;
+  border-color: var(--kk-orange);
+  box-shadow: 0 0 0 3px rgba(232, 145, 58, 0.12);
+}
+
+.kk-input::placeholder {
+  color: var(--kk-text-muted);
+}
+
+select.kk-input {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%239CA3AF' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+}
+
+textarea.kk-input {
+  height: auto;
+  min-height: 80px;
+  padding: var(--kk-space-3) var(--kk-space-4);
+  resize: vertical;
+}
+
+
+/* ── Error ── */
+
+.kk-error {
+  background: var(--kk-red-light);
+  color: var(--kk-red);
+  font-size: 13px;
+  font-weight: 500;
+  padding: var(--kk-space-3) var(--kk-space-4);
+  border-radius: var(--kk-radius-sm);
+  margin-bottom: var(--kk-space-4);
+}
+
+
+/* ── Auth footer links ── */
+
+.kk-auth-footer {
+  text-align: center;
+  margin-top: var(--kk-space-5);
+  font-size: 13px;
+  color: var(--kk-text-muted);
+}
+
+.kk-auth-footer a {
+  color: var(--kk-orange);
+  font-weight: 500;
+}
+
+.kk-auth-footer a:hover {
+  text-decoration: underline;
+}
+
+
+/* ── Button row (back/next in multi-step) ── */
+
+.kk-auth-row {
+  display: flex;
+  gap: var(--kk-space-3);
+  margin-top: var(--kk-space-5);
+}
+
+.kk-auth-row .kk-btn {
+  flex: 1;
+}

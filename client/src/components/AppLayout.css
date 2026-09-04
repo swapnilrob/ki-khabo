@@ -1,0 +1,123 @@
+/* ═══════════════════════════════════════════════════════════════
+   App Layout — three-column grid
+   ═══════════════════════════════════════════════════════════════ */
+
+.kk-app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.kk-layout {
+  flex: 1;
+  max-width: var(--kk-content-max);
+  width: 100%;
+  margin: 0 auto;
+  padding: var(--kk-space-6);
+  display: grid;
+  gap: var(--kk-space-6);
+
+  /* Default: single center column */
+  grid-template-columns: 1fr;
+  grid-template-areas: "main";
+}
+
+/* With left sidebar only */
+.kk-layout--has-sidebar {
+  grid-template-columns: var(--kk-sidebar-w) 1fr;
+  grid-template-areas: "sidebar main";
+}
+
+/* With both sidebars */
+.kk-layout--has-sidebar.kk-layout--has-aside {
+  grid-template-columns: var(--kk-sidebar-w) 1fr var(--kk-sidebar-r-w);
+  grid-template-areas: "sidebar main aside";
+}
+
+/* With right sidebar only */
+.kk-layout--has-aside:not(.kk-layout--has-sidebar) {
+  grid-template-columns: 1fr var(--kk-sidebar-r-w);
+  grid-template-areas: "main aside";
+}
+
+.kk-layout__sidebar {
+  grid-area: sidebar;
+}
+
+.kk-layout__main {
+  grid-area: main;
+  min-width: 0; /* prevent grid blowout */
+}
+
+.kk-layout__aside {
+  grid-area: aside;
+}
+
+/* Sidebar content sticks to top while scrolling */
+.kk-layout__sidebar,
+.kk-layout__aside {
+  position: sticky;
+  top: calc(var(--kk-navbar-h) + var(--kk-space-6));
+  align-self: start;
+  max-height: calc(100vh - var(--kk-navbar-h) - var(--kk-space-8));
+  overflow-y: auto;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   Responsive
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 1100px) {
+  /* Collapse right sidebar below main on tablets */
+  .kk-layout--has-sidebar.kk-layout--has-aside {
+    grid-template-columns: var(--kk-sidebar-w) 1fr;
+    grid-template-areas:
+      "sidebar main"
+      "sidebar aside";
+  }
+
+  .kk-layout--has-aside:not(.kk-layout--has-sidebar) {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "main"
+      "aside";
+  }
+
+  .kk-layout__aside {
+    position: static;
+    max-height: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .kk-layout {
+    padding: var(--kk-space-4);
+    gap: var(--kk-space-4);
+  }
+
+  /* Everything stacks on mobile */
+  .kk-layout--has-sidebar,
+  .kk-layout--has-sidebar.kk-layout--has-aside,
+  .kk-layout--has-aside:not(.kk-layout--has-sidebar) {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "main"
+      "sidebar"
+      "aside";
+  }
+
+  .kk-layout__sidebar {
+    position: static;
+    max-height: none;
+    order: 2;
+  }
+
+  .kk-layout__main {
+    order: 1;
+  }
+
+  .kk-layout__aside {
+    order: 3;
+  }
+}

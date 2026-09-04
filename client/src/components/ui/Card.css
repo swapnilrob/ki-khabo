@@ -1,0 +1,24 @@
+.kk-card {
+  background: var(--kk-white);
+  border: 1px solid var(--kk-border);
+  border-radius: var(--kk-radius);
+  box-shadow: var(--kk-shadow);
+  padding: var(--kk-space-5);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.kk-card--hover:hover {
+  box-shadow: var(--kk-shadow-hover);
+  transform: translateY(-2px);
+}
+
+.kk-card--compact {
+  padding: var(--kk-space-3);
+}
+
+.kk-card--transparent {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
