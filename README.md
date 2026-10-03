@@ -15,7 +15,7 @@ A full-stack web application that connects users with restaurants, enables healt
 [![Express](https://img.shields.io/badge/Express.js-4-000000?logo=express&logoColor=white)](https://expressjs.com/)
 [![License](https://img.shields.io/badge/License-Academic-blue)]()
 
-[Live Demo](https://ki-khabo.vercel.app) · [API Endpoint](https://kikhabo-api.onrender.com/api/health)
+[Live Demo]([https://ki-khabo.vercel.app](https://ki-khabo-pi.vercel.app/)) · [API Endpoint](https://kikhabo-api.onrender.com/api/health)
 
 </div>
 
