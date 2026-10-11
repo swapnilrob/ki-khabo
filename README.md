@@ -12,7 +12,7 @@ A full-stack web application that connects users with restaurants, enables healt
 [![Node.js](https://img.shields.io/badge/Node.js-18+-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?logo=mongodb&logoColor=white)](https://www.mongodb.com/atlas)
-[![Express](https://img.shields.io/badge/Express.js-4-000000?logo=express&logoColor=white)](https://expressjs.com/)
+[![Express](https://img.shields.io/badge/Express.js-5-000000?logo=express&logoColor=white)](https://expressjs.com/)
 [![License](https://img.shields.io/badge/License-Academic-blue)]()
 
 [Live Demo](https://ki-khabo-pi.vercel.app) · [API Endpoint](https://kikhabo-api.onrender.com/api/health)
@@ -30,10 +30,10 @@ Ki Khabo is a comprehensive food discovery and ordering platform built for the D
 ### Key Highlights
 
 - **Restaurant Discovery** with interactive Google Maps integration, smart filters, and nearby restaurant search
-- **AI Nutrition Assistant** powered by OpenAI for personalized diet advice and food image recognition
+- **AI Nutrition Assistant** powered by Groq for personalized diet advice and food image recognition
 - **Smart Meal Planner** that builds weekly plans aligned with dietary goals and budget
 - **Food-Specific Reviews** — rate individual dishes, not just restaurants
-- **Premium Subscription** with bKash/SSLCommerz payment integration
+- **Premium Subscription** with Stripe payment integration
 - **Admin Verification Pipeline** — restaurant applications are reviewed before going live
 
 ---
@@ -46,7 +46,7 @@ Ki Khabo is a comprehensive food discovery and ordering platform built for the D
 | **Backend** | Express.js, Node.js 18+ |
 | **Database** | MongoDB Atlas, Mongoose ODM |
 | **Auth** | JWT (JSON Web Tokens), bcrypt |
-| **External APIs** | OpenAI, Google Maps, NodeMailer, bKash / SSLCommerz |
+| **External APIs** | Groq (OpenAI-compatible SDK), Google Maps, NodeMailer, Stripe |
 | **Deployment** | Render (API), Vercel (Client) |
 
 ---
@@ -80,12 +80,12 @@ Ki Khabo is a comprehensive food discovery and ordering platform built for the D
 - Social features: follow friends, save dishes, create and discover public food lists
 
 ### Module 3 — Premium & Operations
-- AI diet assistant (OpenAI) with personalized meal suggestions from platform menus
+- AI diet assistant (Groq) with personalized meal suggestions from platform menus
 - AI food image recognition for effortless calorie logging from photos
 - Restaurant management dashboard with order analytics and menu CRUD
 - Order & table booking system with real-time status notifications
 - Email notifications (NodeMailer) for orders, bookings, and meal plan reminders
-- Premium subscription via bKash/SSLCommerz (200 BDT/month or 2,000 BDT/year)
+- Premium subscription via Stripe (200 BDT/month or 2,000 BDT/year)
 - Loyalty reward points redeemable as subscription discounts
 
 ---
@@ -178,6 +178,9 @@ JWT_EXPIRES_IN=7d
 CLIENT_URL=http://localhost:5173
 ADMIN_EMAIL=admin@kikhabo.com
 ADMIN_PASSWORD=<choose-a-strong-password>
+GROQ_API_KEY=<your-groq-api-key>
+STRIPE_SECRET_KEY=<your-stripe-secret-key>
+STRIPE_WEBHOOK_SECRET=<your-stripe-webhook-secret>
 ```
 
 Seed the admin account and start the server:
@@ -250,17 +253,17 @@ Open `http://localhost:5173` in your browser.
 |---|---|---|
 | Swapnil Rob | `feature/swapnil` | M1-2 Restaurant & Dish Profile · M2-3 Smart Meal Planner · M3-3 Restaurant Dashboard · M3-5 Notifications (NodeMailer) |
 | Abdullah Al Noman | `feature/noman` | M1-1 Restaurant Discovery (Google Maps) · M2-2 Recommendation Engine · M3-4 Order & Booking · M3-8 Admin Dashboard |
-| Md. Mostahid Hasan | `feature/mostahid` | M1-3 Profile & Dietary Prefs · M2-1 Health Dashboard · M3-1 AI Diet Assistant · M3-2 AI Image Recognition (OpenAI) |
-| Md. Shakib-Al-Hossain | `feature/shakib` | M1-4 Ratings & Reviews · M2-4 Community · M3-6 Subscription (bKash/SSLCommerz) · M3-7 Reward Points |
+| Md. Mostahid Hasan | `feature/mostahid` | M1-3 Profile & Dietary Prefs · M2-1 Health Dashboard · M3-1 AI Diet Assistant · M3-2 AI Image Recognition (Groq) |
+| Md. Shakib-Al-Hossain | `feature/shakib` | M1-4 Ratings & Reviews · M2-4 Community · M3-6 Subscription (Stripe) · M3-7 Reward Points |
 
 ### External API Ownership
 
 | Member | API | Used In |
 |---|---|---|
-| Md. Mostahid Hasan | OpenAI API | AI Nutrition Assistant, Food Image Recognition |
+| Md. Mostahid Hasan | Groq API | AI Nutrition Assistant, Food Image Recognition |
 | Abdullah Al Noman | Google Maps API | Restaurant Discovery & Map View |
 | Swapnil Rob | Gmail API / NodeMailer | Notifications & Email Reminders |
-| Md. Shakib-Al-Hossain | bKash / SSLCommerz | Subscription & Payment System |
+| Md. Shakib-Al-Hossain | Stripe API | Subscription & Payment System |
 
 ---
 
